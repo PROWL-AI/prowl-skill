@@ -1,0 +1,44 @@
+{
+  "name": "prowl",
+  "version": "0.1.0",
+  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (360+ tools).",
+  "author": {
+    "name": "Prowl",
+    "email": "support@prowl.chat",
+    "url": "https://prowl.chat/"
+  },
+  "homepage": "https://prowl.chat/",
+  "repository": "https://github.com/ssheleg/prowl-skill",
+  "license": "MIT",
+  "keywords": [
+    "prowl",
+    "market-intelligence",
+    "competitive-analysis",
+    "seo",
+    "ads",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Prowl",
+    "shortDescription": "One MCP, 360+ market-intelligence tools",
+    "longDescription": "Connect the hosted Prowl MCP server to give any agent 360+ market-intelligence tools — SEO, ads, SERP, scraping, AI — plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet.",
+    "developerName": "Prowl",
+    "category": "Research",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://prowl.chat/",
+    "privacyPolicyURL": "https://prowl.chat/privacy/",
+    "termsOfServiceURL": "https://prowl.chat/terms/",
+    "defaultPrompt": [
+      "List the Prowl tools available",
+      "Run a competitive analysis on a domain",
+      "Pull SERP and keyword data for a topic"
+    ],
+    "brandColor": "#00ff41",
+    "screenshots": []
+  }
+}

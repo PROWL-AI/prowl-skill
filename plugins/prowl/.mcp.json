@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "prowl": {
+      "command": "sh",
+      "args": [
+        "-lc",
+        "TOKEN=\"${PROWL_MCP_TOKEN:-}\"; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.prowl/prowl_mcp_token\" ]; then TOKEN=\"$(cat \"$HOME/.prowl/prowl_mcp_token\")\"; fi; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.codex/prowl_mcp_token\" ]; then TOKEN=\"$(cat \"$HOME/.codex/prowl_mcp_token\")\"; fi; exec npx -y mcp-remote https://prowl.chat/mcp --header \"Authorization: Bearer $TOKEN\" --transport http-first --silent"
+      ]
+    }
+  }
+}

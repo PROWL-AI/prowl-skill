@@ -1,0 +1,21 @@
+{
+  "name": "prowl",
+  "owner": {
+    "name": "Prowl",
+    "email": "support@prowl.chat"
+  },
+  "metadata": {
+    "description": "Prowl Claude Code plugin: one MCP that gives any agent 360+ market-intelligence tools (SEO, ads, SERP, scraping, AI) on pay-as-you-go USD wallet billing."
+  },
+  "plugins": [
+    {
+      "name": "prowl",
+      "source": "./plugins/prowl",
+      "description": "Adds the namespaced Prowl install/usage skill and the hosted Prowl MCP server.",
+      "author": {
+        "name": "Prowl",
+        "email": "support@prowl.chat"
+      }
+    }
+  ]
+}
