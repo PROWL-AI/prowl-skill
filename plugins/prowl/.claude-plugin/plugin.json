@@ -1,13 +1,13 @@
 {
   "name": "prowl",
-  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (360+ tools).",
-  "version": "0.1.0",
+  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (385 tools).",
+  "version": "0.2.0",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",
     "url": "https://prowl.chat/"
   },
   "homepage": "https://prowl.chat/",
-  "repository": "https://github.com/ssheleg/prowl-skill",
+  "repository": "https://github.com/PROWL-AI/prowl-skill",
   "license": "MIT"
 }

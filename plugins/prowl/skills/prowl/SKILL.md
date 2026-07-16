@@ -1,12 +1,16 @@
 ---
 name: prowl
-description: Use the Prowl MCP — one MCP that gives this agent 360+ market-intelligence tools (SEO, ads, SERP, scraping, AI) plus the full Prowl analysis pipeline, on pay-as-you-go USD wallet billing. Use for competitor research, SEO/SERP data, ad creative research, pricing/funnel analysis, and any task needing real numbers instead of guesses.
-version: 0.1.0
+description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 385 market-intelligence tools (SEO, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword data, analyzing ad creative or spend, comparing pricing or funnels, or any task that needs real market data instead of guesses.
+license: MIT
+compatibility: Requires network access to prowl.chat and a Prowl API token; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
+metadata:
+  author: prowl.chat
+  version: "0.2.0"
 ---
 
 # Prowl — market intelligence for your agent
 
-Prowl is a single MCP endpoint that exposes **360+ marketing-intelligence API tools** (DataForSEO, SearchAPI, SerpAPI, web scraping, SEO, ads, AI) plus the full Prowl pipeline (`prowl_analyze`, async research sessions, artifacts). Call real data instead of guessing.
+Prowl is a single MCP endpoint that exposes **385 marketing-intelligence API tools** (DataForSEO, SearchAPI, SerpAPI, web scraping, SEO, ads, AI) plus the full Prowl pipeline (`prowl_analyze`, async research sessions, artifacts). Call real data instead of guessing.
 
 - MCP URL: `https://prowl.chat/mcp`
 - Transport: Streamable HTTP
@@ -28,7 +32,7 @@ For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp 
 
 | Tool | Purpose |
 |------|---------|
-| `prowl_list_tools` | Browse the 360+ tools by category (free) |
+| `prowl_list_tools` | Browse the 385 tools by category (free) |
 | `prowl_tool_info` | JSON input schema + estimated cost for one tool |
 | `prowl_call_tool` | Invoke any single tool, metered (wallet debit) |
 | `prowl_analyze` | Full multi-agent competitive report in one shot |
@@ -41,7 +45,7 @@ Full reference: [https://prowl.chat/mcp/skill.md](https://prowl.chat/mcp/skill.m
 ## Verify
 
 1. List MCP tools; confirm `prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`.
-2. Run `prowl_list_tools` (free) → 360+ tools grouped by category.
+2. Run `prowl_list_tools` (free) → 385 tools grouped by category.
 3. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`.
 
 ## Billing
