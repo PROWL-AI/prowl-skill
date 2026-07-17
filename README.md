@@ -1,8 +1,8 @@
 # Prowl Plugin
 
-**One MCP. 360+ market-intelligence tools for your agent.**
+**One MCP. 385 market-intelligence tools for your agent.**
 
-Prowl is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) 360+ market-intelligence tools — SEO, ads, SERP, web scraping, AI — plus the full Prowl analysis pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+Prowl is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) 385 market-intelligence tools — SEO, ads, SERP, web scraping, AI — plus the full Prowl analysis pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
 
 - MCP URL: `https://prowl.chat/mcp` (Streamable HTTP)
 - Auth: `Authorization: Bearer prowl_<your_key>`
@@ -36,14 +36,14 @@ chmod 600 ~/.prowl/prowl_mcp_token
 **Claude Code**
 
 ```bash
-claude plugin marketplace add https://github.com/ssheleg/prowl-skill
+claude plugin marketplace add https://github.com/PROWL-AI/prowl-skill
 claude plugin install prowl@prowl
 ```
 
 **Codex**
 
 ```bash
-codex plugin marketplace add https://github.com/ssheleg/prowl-skill
+codex plugin marketplace add https://github.com/PROWL-AI/prowl-skill
 ```
 
 Then ensure `[plugins."prowl@prowl"] enabled = true` in `${CODEX_HOME:-$HOME/.codex}/config.toml` and restart.
@@ -60,7 +60,7 @@ Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `
 curl https://prowl.chat/mcp/health
 ```
 
-Then, from your agent, run `prowl_list_tools` (free) to see all 360+ tools.
+Then, from your agent, run `prowl_list_tools` (free) to see all 385 tools.
 
 ## Security
 
