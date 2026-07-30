@@ -1,8 +1,15 @@
 # Prowl Plugin
 
-**One MCP. 385 market-intelligence tools for your agent.**
+**One MCP. 408 market-intelligence tools for your agent.**
 
-Prowl is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) 385 market-intelligence tools — SEO, ads, SERP, web scraping, AI — plus the full Prowl analysis pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+[![Live](https://img.shields.io/badge/prowl.chat-live-00c853?style=flat-square)](https://prowl.chat)
+[![MCP](https://img.shields.io/badge/MCP-prowl.chat%2Fmcp-6e40c9?style=flat-square)](https://prowl.chat/mcp)
+[![Tools](https://img.shields.io/badge/tools-408-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+
+[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **408 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+
+This repo is the **installable plugin**: a namespaced `/prowl:*` skill plus a ready-made MCP config. Install it and your coding agent wires up the rest itself.
 
 - MCP URL: `https://prowl.chat/mcp` (Streamable HTTP)
 - Auth: `Authorization: Bearer prowl_<your_key>`
@@ -11,7 +18,7 @@ Prowl is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Cod
 
 ## Skill included
 
-**`/prowl`** — Install and use the Prowl MCP: token setup, core tools (`prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`, async sessions), verification, and billing.
+**`/prowl`** — install and use the Prowl MCP: token setup, core tools (`prowl_list_tools`, `prowl_search_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`, async sessions, schedules), tiers, playbooks, verification, and billing.
 
 ## Setup
 
@@ -60,7 +67,17 @@ Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `
 curl https://prowl.chat/mcp/health
 ```
 
-Then, from your agent, run `prowl_list_tools` (free) to see all 385 tools.
+Then, from your agent, run `prowl_list_tools` (free) → 408 tools grouped by category.
+
+## What your agent gets
+
+- **22 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.
+- **3 tiers** for `prowl_analyze` — `basic` / `deep` / `max`, each with a hard provider-cost cap ($2.50 / $8.00 / $18.00). You are never billed more than the reserved hold.
+- **8 playbooks** — `geo-visibility-audit`, `competitor-teardown`, `content-engine`, `local-and-reputation`, `mobile-aso`, `amazon-marketplace`, `idea-validation`, `channel-economics-audit`.
+- **Verified reports** — a typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.
+- **Exports** — Markdown, PDF, PPTX, audio brief, video.
+
+Prefer a terminal? See [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli).
 
 ## Security
 
