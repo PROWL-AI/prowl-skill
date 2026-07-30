@@ -16,9 +16,14 @@ This repo is the **installable plugin**: a namespaced `/prowl:*` skill plus a re
 - Hosted install playbook: <https://prowl.chat/mcp/install.md>
 - Full tool reference: <https://prowl.chat/mcp/skill.md>
 
-## Skill included
+## Plugins included
 
-**`/prowl`** — install and use the Prowl MCP: token setup, core tools (`prowl_list_tools`, `prowl_search_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`, async sessions, schedules), tiers, playbooks, verification, and billing.
+| Plugin | Skill | What it covers |
+|--------|-------|----------------|
+| `prowl` | `/prowl` | Install and use the Prowl **MCP**: token setup, core tools (`prowl_list_tools`, `prowl_search_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`, async sessions, schedules), tiers, playbooks, verification, and billing. Ships the `.mcp.json`. |
+| `prowl-cli` | `/prowl-cli` | Drive the same catalog from the **shell** with [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli): catalog commands, metered calls, `analyze` tiers and their cost caps, playbooks, `--json` output, exit codes. No MCP server required. |
+
+Install either or both — the MCP plugin for agent tool calls, the CLI plugin for scripts, CI and terminal work.
 
 ## Setup
 
@@ -45,6 +50,7 @@ chmod 600 ~/.prowl/prowl_mcp_token
 ```bash
 claude plugin marketplace add https://github.com/PROWL-AI/prowl-skill
 claude plugin install prowl@prowl
+claude plugin install prowl-cli@prowl   # optional: the shell client skill
 ```
 
 **Codex**
@@ -77,7 +83,7 @@ Then, from your agent, run `prowl_list_tools` (free) → 408 tools grouped by ca
 - **Verified reports** — a typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.
 - **Exports** — Markdown, PDF, PPTX, audio brief, video.
 
-Prefer a terminal? See [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli).
+Prefer a terminal? Install the `prowl-cli` plugin above, or use [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli) directly.
 
 ## Security
 

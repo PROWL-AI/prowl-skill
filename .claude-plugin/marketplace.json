@@ -16,6 +16,15 @@
         "name": "Prowl",
         "email": "support@prowl.chat"
       }
+    },
+    {
+      "name": "prowl-cli",
+      "source": "./plugins/prowl-cli",
+      "description": "Adds the Prowl CLI skill: drive the same 408-tool catalog from the shell with @prowl-ai/cli — no MCP server required.",
+      "author": {
+        "name": "Prowl",
+        "email": "support@prowl.chat"
+      }
     }
   ]
 }
