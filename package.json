@@ -1,15 +1,48 @@
 {
   "name": "@prowl-ai/prowl-skill",
-  "private": true,
-  "version": "0.3.0",
-  "description": "The Prowl plugin: install/usage skills, the hosted MCP config, and the live status widget that makes a running Prowl call visible in the terminal.",
+  "version": "0.4.0",
+  "description": "The Prowl plugin: install/usage skills, the hosted MCP config, and the live status widget that makes a running Prowl call, its progress and its cost visible in the terminal. This package is the installer CLI.",
+  "keywords": [
+    "prowl",
+    "mcp",
+    "market-intelligence",
+    "competitive-analysis",
+    "seo",
+    "claude-code",
+    "plugin",
+    "agent-skills",
+    "status-line",
+    "hooks"
+  ],
+  "homepage": "https://prowl.chat/",
+  "bugs": {
+    "url": "https://github.com/PROWL-AI/prowl-skill/issues"
+  },
+  "repository": "github:PROWL-AI/prowl-skill",
+  "license": "MIT",
+  "author": {
+    "name": "Prowl",
+    "email": "support@prowl.chat",
+    "url": "https://prowl.chat/"
+  },
+  "bin": {
+    "prowl-skill": "bin/prowl-skill.js"
+  },
   "scripts": {
     "test": "node test/run.js",
     "check:tools": "node scripts/check-tool-count.js"
   },
-  "repository": "github:PROWL-AI/prowl-skill",
-  "homepage": "https://prowl.chat/",
-  "license": "MIT",
+  "files": [
+    "bin",
+    "plugins",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "engines": {
     "node": ">=18"
   }

@@ -66,6 +66,23 @@ const PLANTS = [
     apply: (t) => t.replace(/^function unwrap\(node, depth\) \{$/m, 'function unwrap(node, depth) {\n  return node;'),
     expect: 'encoded body',
   },
+  {
+    // A plain copy beside the plugin serves its frozen version forever, and says
+    // nothing while doing it. The guard against it is the whole reason `plain` is a
+    // separate verb rather than the default.
+    name: 'the installer stops refusing to shadow a plugin',
+    file: 'bin/prowl-skill.js',
+    apply: (t) => t.replace('if (installed && !opts.force) {', 'if (false) {'),
+    expect: 'shadow',
+  },
+  {
+    // The version lives in seven places, and a release that tags one of them while
+    // shipping another is the failure this check exists to make impossible.
+    name: 'a plugin stops agreeing with itself about its version',
+    file: 'plugins/prowl/.codex-plugin/plugin.json',
+    apply: (t) => t.replace(/"version": "\d+\.\d+\.\d+"/, '"version": "99.99.99"'),
+    expect: 'disagrees with itself',
+  },
 ];
 
 function sha(file) {

@@ -1,6 +1,59 @@
 # Changelog
 
-## 2026-08-13 — `prowl` 0.3.0, `prowl-cli` 0.1.1
+## v0.4.0 — 2026-08-13
+
+Package `@prowl-ai/prowl-skill` 0.4.0 · plugins `prowl` 0.3.0, `prowl-cli` 0.1.1
+(unchanged — the package gained an installer, the plugins did not change).
+
+### Added
+
+- **`npx @prowl-ai/prowl-skill`** — one command that adds the marketplace, installs
+  both plugins and says what to do next. Verbs: `install`, `update`, `statusline`,
+  `token`, `status`, `plain`. Every one takes `--dry-run`, which prints what it would
+  do and changes nothing. Zero dependencies: it runs through `npx` on a machine that
+  has agreed to nothing yet.
+
+  **It installs the plugin rather than copying the skill**, and that is the design
+  decision worth stating. The obvious shape — copy `skills/prowl/` into
+  `~/.claude/skills/` — delivers the text and silently drops everything the text is
+  about: the hooks and the MCP server. Worse, a plain copy of the same name shadows an
+  installed plugin and serves its frozen version forever. `plain` exists for agents
+  with no plugin channel and refuses to run where the plugin is installed.
+
+  Two things it will not do quietly: it never replaces a `statusLine` somebody else
+  set without `--force`, and it never writes to `~/.claude/settings.json` without
+  taking a backup first and reading it back — a copy that cannot be verified cancels
+  the write.
+
+- **`release.yml`** — tag-driven publication, off by default behind the repository
+  variables `RELEASE_ENABLED` and `PUBLISH_NPMJS`. A `v*` tag runs the suite and every
+  guard **on the tag**, validates both plugins and the marketplace with
+  `claude plugin validate --strict`, checks that the tag matches `package.json`,
+  extracts the CHANGELOG section, cuts the GitHub release, packs the tarball and runs
+  the installer out of it the way `npx` would, then publishes with provenance.
+
+  A tag rather than a push to main: every commit publishing would make every
+  work-in-progress state a release somebody's `npx` picks up.
+
+- **`test/version_sync_test.js`** — the version lives in seven places. The two plugins
+  are versioned independently, so the rule is agreement *within* a plugin plus
+  `package.json` matching the tag. It also asserts both marketplace manifests list
+  exactly the plugin directories on disk, and that the CHANGELOG has a heading the
+  release workflow's pattern can find.
+
+### Fixed
+
+- **The CHANGELOG heading could not be extracted**, and nothing would have said so
+  until after the tag was public — the class that cost a sibling project three
+  releases. Found offline by the new check, before any tag existed.
+
+- **`scripts/` shipped inside the npm tarball.** `negative-self-test.js` rewrites
+  source files by design; inside a published package that is a script capable of
+  mangling somebody's `node_modules`, and no consumer has any use for it.
+
+## v0.3.0 — 2026-08-13
+
+Package `@prowl-ai/prowl-skill` 0.3.0 · plugins `prowl` 0.3.0, `prowl-cli` 0.1.1.
 
 ### Added
 
