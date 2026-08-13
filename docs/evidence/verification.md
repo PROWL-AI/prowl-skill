@@ -70,3 +70,49 @@ free call (`prowl_list_tools`, category `ai`) was made straight afterwards:
 `~/.prowl/status/` gained **no** new file. Plugins and their hooks are loaded at
 session start, so the dispatcher in the session that built this could never have
 carried them. The restart is a human step and it is the only one this change has.
+
+---
+
+# Run 2 — npx distribution
+
+**Run** `npx installs it, and a tag publishes it` · 2026-08-13 · commits `013faba`,
+`80a3775` · PR [#3](https://github.com/PROWL-AI/prowl-skill/pull/3), merged `c622978`
+· release run `31727838433`.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| D-01 | `npx @prowl-ai/prowl-skill` installs the plugins | driven from a clean directory against the **published** package: `npx --yes @prowl-ai/prowl-skill@latest install` added the marketplace and installed both plugins | verified |
+| D-02 | The installer never copies a skill where a plugin belongs | `installer_test.js`: `plain` refuses where the marketplace exists and creates nothing; planted against in the guard suite | verified |
+| D-03 | A status line set by somebody else is never taken silently | `installer_test.js`, both directions: refused without `--force`, replaced with it, and unrelated settings preserved | verified |
+| D-04 | Nothing is written to settings without a verified backup | `installer_test.js`: the copy is read back and compared; an absent file is a success with no copy | verified |
+| D-05 | A key is never echoed and never stored malformed | `installer_test.js`: a bad key is refused with exit 2; a good one lands at mode `600` and appears in no output | verified |
+| D-06 | `--dry-run` changes nothing | `installer_test.js` compares the home directory before and after | verified |
+| D-07 | A `v*` tag publishes, and nothing else does | release run `31727838433`: eleven steps green, `+ @prowl-ai/prowl-skill@0.4.0` with a provenance statement in the sigstore transparency log | verified |
+| D-08 | The version cannot drift across seven surfaces | `version_sync_test.js`, planted against by disarming one plugin manifest | verified |
+| D-09 | The published package actually runs | `npx --yes @prowl-ai/prowl-skill@latest --version / --help / status` from an empty directory on a real machine | verified |
+| D-10 | This machine consumes releases, not a working tree | the marketplace was re-pointed to `{"source":"github","repo":"PROWL-AI/prowl-skill"}`, and the reinstalled copy carries the widget including the `1 call` fix | verified |
+
+## What went wrong
+
+**The first release cut a GitHub release and published nothing.** `gh secret set
+NPM_TOKEN` with no value, run without a TTY, reads stdin, gets nothing, and stores an
+**empty** secret — which `gh secret list` then reports as present. The only visible
+symptom was `NODE_AUTH_TOKEN:` with nothing after it in the job log, and that is
+legible only if you know a non-empty secret prints as `***`.
+
+It cost one false release: tag public, GitHub release published, npm empty — the exact
+*looks delivered, shipped nothing* state. It cost **one re-run** rather than a manual
+repair, because the release step had been made idempotent twenty minutes earlier, for
+this reason, before it happened.
+
+**The placeholder was pasted literally on the second attempt**, storing the string
+`npm_ВАШ_ТОКЕН` as the secret. Non-empty, so it would have masked as `***` and failed
+differently from the first attempt. Caught before the re-run by reading the command
+rather than waiting for the result.
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| An npm token with publish rights to `@prowl-ai` was typed into a terminal in clear text and is recorded in one session transcript on disk. The shell histories are clean and the temp file was removed | Revoke it at npmjs.com. The release is published and the token is not needed until the next tag; issue the next one through the GitHub web UI |
+| The hooks have still never fired from Claude Code's own dispatcher (carried from run 1) | Restart Claude Code, make one free Prowl call, read `~/.prowl/status/` |
