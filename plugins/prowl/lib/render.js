@@ -106,7 +106,8 @@ function line(state, opts) {
   if (calls) {
     const ok = typeof totals.ok === 'number' ? totals.ok : 0;
     const failed = typeof totals.failed === 'number' ? totals.failed : 0;
-    parts.push(`${calls} calls ${ok}✓${failed ? ` ${failed}✗` : ''}`);
+    // "1 calls" is what a widget nobody looked at says. Found by looking at one.
+    parts.push(`${calls} ${calls === 1 ? 'call' : 'calls'} ${ok}✓${failed ? ` ${failed}✗` : ''}`);
     // The server's own figure wins when it volunteered one — it is what Prowl says it
     // charged, against what this session happened to observe. Marked, so the two are
     // never read as the same claim.

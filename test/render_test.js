@@ -61,6 +61,13 @@ it('failures are shown, and a clean run is not padded with a zero', () => {
   assert.ok(render.line(dirty, { now: NOW }).includes('3 calls 2✓ 1✗'));
 });
 
+it('one call is a call, not "1 calls"', () => {
+  const one = seeded({ totals: { calls: 1, ok: 1, failed: 0, usd: 0.0125 } });
+  const two = seeded({ totals: { calls: 2, ok: 2, failed: 0, usd: 0.0125 } });
+  assert.ok(render.line(one, { now: NOW }).includes('1 call '), render.line(one, { now: NOW }));
+  assert.ok(render.line(two, { now: NOW }).includes('2 calls '), render.line(two, { now: NOW }));
+});
+
 it('the ticker shows the newest first', () => {
   const s = seeded({
     totals: { calls: 3, ok: 2, failed: 1, usd: 0.1 },

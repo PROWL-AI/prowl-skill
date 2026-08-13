@@ -15,8 +15,8 @@ jobs:
         # 18 is the floor the manifests promise; 22 is what most operators run.
         node: ['18', '22']
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
       - name: suite
@@ -29,7 +29,7 @@ jobs:
   manifests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: every manifest is valid JSON
         run: |
           set -euo pipefail
@@ -48,8 +48,8 @@ jobs:
     # change under test.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: the stated tool count still matches the server

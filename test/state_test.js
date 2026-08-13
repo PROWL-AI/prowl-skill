@@ -99,19 +99,41 @@ it('the same thing is said once', () => {
   assert.strictEqual(state.claimSpeech(HOME, K, 'err:other'), true);
 });
 
-it('concurrent writers both survive — the lost update is what the lock is for', () => {
+it('concurrent writers all survive — the lost update is what the lock is for', () => {
   const K = 'sess-race';
-  const N = 8;
+  const WRITERS = 8;
+  const EACH = 5;
+  const N = WRITERS * EACH;
+
+  // **Two things make this deterministic, and both were learned the hard way.**
+  //
+  // A start barrier, because eight processes launched in sequence can finish in
+  // sequence: without overlap there is no lost update, and the fixture then passes
+  // whether the lock exists or not. And five writes each rather than one, because a
+  // single read-modify-write is a window measured in microseconds — CI proved it,
+  // detecting the removed lock on one Node version and not on the other.
+  const gate = path.join(HOME, 'race-go');
   const script = `
+    const fs = require('fs');
     const state = require(${JSON.stringify(path.join(LIB, 'state.js'))});
     const i = process.argv[2];
-    state.closeCall(${JSON.stringify(HOME)}, ${JSON.stringify(K)}, { id: 'r' + i, tool: 'prowl_call_tool', ok: true, usd: 0.01 });
+    const deadline = Date.now() + 10000;
+    while (!fs.existsSync(${JSON.stringify(gate)}) && Date.now() < deadline) {
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1);
+    }
+    for (let k = 0; k < ${EACH}; k += 1) {
+      state.closeCall(${JSON.stringify(HOME)}, ${JSON.stringify(K)},
+        { id: 'r' + i + '-' + k, tool: 'prowl_call_tool', ok: true, usd: 0.01 });
+    }
   `;
-  for (let i = 0; i < N; i += 1) {
+  for (let i = 0; i < WRITERS; i += 1) {
     require('child_process').spawn(process.execPath, ['-e', script, String(i)], {
       stdio: 'ignore', detached: true,
     }).unref();
   }
+  // Give every child time to reach the gate, then open it so they start together.
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 300);
+  fs.writeFileSync(gate, 'go', 'utf8');
 
   // Wait for the RESULT, not for the processes. A child of a blocked parent is a
   // zombie, and `kill(pid, 0)` answers "alive" for a zombie — so a pid-based join
