@@ -75,6 +75,32 @@ curl https://prowl.chat/mcp/health
 
 Then, from your agent, run `prowl_list_tools` (free) → 448 tools grouped by category.
 
+## The status widget
+
+A `prowl_analyze` call runs 30 seconds to 5 minutes and an async session runs longer.
+For all of that time the terminal shows a spinner, and what it cost appears only
+inside a response body nobody reads. The `prowl` plugin ships hooks that fix both.
+
+**It calls no API.** Every figure it shows was already in a response your agent
+received, so the widget costs nothing and cannot spend your wallet to draw itself.
+
+On by default, once the plugin is installed:
+
+- a **progress bar in the dock/taskbar** when `prowl_session_status` reports a
+  fraction, taken down when the session reports a terminal status
+- a **one-time notice** when a call fails or the wallet blocks one — once per kind of
+  failure, so an agent retrying five times does not produce five notices
+
+Opt-in, one edit to `~/.claude/settings.json` (a plugin cannot ship a status line):
+
+```
+prowl · ⟳ analyze 1:12 · 12 calls 11✓ 1✗ · $0.31 · ctx 42% · ▸ call_tool✓ tool_info✓ search_tools✓
+```
+
+See the [`prowl` skill](plugins/prowl/skills/prowl/SKILL.md#the-status-widget) for the
+two commands. State lives in `~/.prowl/status/<session_id>.json` beside your token, is
+pruned after seven days, and the plugin never writes to your Claude Code settings.
+
 ## What your agent gets
 
 - **22 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.

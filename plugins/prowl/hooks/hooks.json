@@ -1,0 +1,42 @@
+{
+  "description": "Prowl — the live status widget. Three observers, no gates: nothing here can refuse a tool call, block a turn or change what the agent does. Every hook exits 0 immediately for any tool that is not Prowl's, so installing the plugin costs nothing in a session that never calls it.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*prowl.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*prowl.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-use.js\"",
+            "statusMessage": "recording the Prowl call",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

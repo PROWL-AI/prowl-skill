@@ -5,13 +5,13 @@
     "email": "support@prowl.chat"
   },
   "metadata": {
-    "description": "Prowl Claude Code plugin: one MCP that gives any agent 448 market-intelligence tools (SEO, ads, SERP, scraping, AI) on pay-as-you-go USD wallet billing."
+    "description": "Prowl Claude Code plugin: one MCP that gives any agent 448 market-intelligence tools (SEO, ads, SERP, scraping, AI) on pay-as-you-go USD wallet billing, plus a status widget that makes a running call, its progress and its cost visible in the terminal."
   },
   "plugins": [
     {
       "name": "prowl",
       "source": "./plugins/prowl",
-      "description": "Adds the namespaced Prowl install/usage skill and the hosted Prowl MCP server.",
+      "description": "Adds the namespaced Prowl install/usage skill, the hosted Prowl MCP server, and the status widget: in-flight calls, async-session progress in the dock, session spend from the server's own billing figures, and a one-time notice when a call fails.",
       "author": {
         "name": "Prowl",
         "email": "support@prowl.chat"

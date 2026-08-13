@@ -1,0 +1,56 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 18 is the floor the manifests promise; 22 is what most operators run.
+        node: ['18', '22']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: suite
+        run: npm test
+      - name: every guard, watched failing
+        # A green suite proves the code passes the tests. This proves the tests would
+        # notice if it stopped.
+        run: node scripts/negative-self-test.js
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: every manifest is valid JSON
+        run: |
+          set -euo pipefail
+          found=0
+          while IFS= read -r f; do
+            python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$f"
+            found=$((found + 1))
+          done < <(find . -name '*.json' -not -path './node_modules/*' -not -path './.git/*')
+          echo "parsed $found manifest(s)"
+          test "$found" -ge 7
+
+  tool-count:
+    runs-on: ubuntu-latest
+    # Reaches prowl.chat. Kept out of `npm test`, which must work offline, and kept
+    # non-blocking on forks, where a network egress failure says nothing about the
+    # change under test.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: the stated tool count still matches the server
+        run: npm run check:tools
