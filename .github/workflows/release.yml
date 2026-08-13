@@ -102,10 +102,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
-          gh release create "${{ steps.t.outputs.tag }}" \
-            --title "${{ steps.t.outputs.tag }}" \
-            --notes-file RELEASE_NOTES.md \
-            --verify-tag
+          TAG="${{ steps.t.outputs.tag }}"
+          # Idempotent, and that matters most on the run you did not plan. If publish
+          # fails — a bad NPM_TOKEN is the usual reason, and it cannot be verified in
+          # advance because a secret is write-only — the fix is to re-run this
+          # workflow. With `create` alone the re-run dies here, on a release that
+          # already exists, and the actual failure never gets another attempt.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TAG" --notes-file RELEASE_NOTES.md
+            echo "release $TAG already existed; notes refreshed"
+          else
+            gh release create "$TAG" --title "$TAG" --notes-file RELEASE_NOTES.md --verify-tag
+          fi
 
       - name: The installer runs from a clean directory, as npx would
         run: |
@@ -129,4 +137,14 @@ jobs:
         if: vars.PUBLISH_NPMJS == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --provenance --access public
+        run: |
+          set -eu
+          # Republishing an existing version is an error, and an error here reads as a
+          # broken release when it usually means "this ran twice". Say which it is.
+          VER=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          if npm view "$NAME@$VER" version >/dev/null 2>&1; then
+            echo "$NAME@$VER is already on npm — nothing to publish."
+            exit 0
+          fi
+          npm publish --provenance --access public
