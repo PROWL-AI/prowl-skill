@@ -45,13 +45,45 @@ chmod 600 ~/.prowl/prowl_mcp_token
 
 ### 3. Install the plugin
 
-**Claude Code**
+**One command, any machine with Node 18+:**
+
+```bash
+npx @prowl-ai/prowl-skill
+```
+
+It adds the marketplace, installs both plugins, and tells you what to do next. Then:
+
+```bash
+npx @prowl-ai/prowl-skill update       # refresh after a new release
+npx @prowl-ai/prowl-skill statusline   # wire the status line (backs up settings first)
+npx @prowl-ai/prowl-skill status       # what is installed, what is missing
+```
+
+Pipe the key in so it never reaches your shell history:
+
+```bash
+printf %s "prowl_YOUR_KEY" | npx @prowl-ai/prowl-skill token
+```
+
+Every command takes `--dry-run`, which prints what it would do and changes nothing.
+
+**By hand, if you prefer:**
 
 ```bash
 claude plugin marketplace add https://github.com/PROWL-AI/prowl-skill
 claude plugin install prowl@prowl
 claude plugin install prowl-cli@prowl   # optional: the shell client skill
 ```
+
+**Agents with no plugin channel** (Cursor, and others that read plain skills):
+
+```bash
+npx @prowl-ai/prowl-skill plain
+```
+
+That copies the skills and nothing else — no hooks, no status widget, no MCP server.
+It refuses to run where the plugin is installed, because a plain copy of the same name
+shadows a plugin and serves its frozen version forever.
 
 **Codex**
 

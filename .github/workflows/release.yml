@@ -1,0 +1,150 @@
+name: release
+
+# Tag-driven, and individually toggleable.
+#
+# **OFF by default.** `release` runs only when the repository variable
+# RELEASE_ENABLED is "true", `publish` only when PUBLISH_NPMJS is "true"
+# (Settings -> Secrets and variables -> Actions -> Variables). A fork decides for
+# itself whether to arm either half, with no code change.
+#
+# **Why a tag and not a push to main.** Every commit publishing would make every
+# work-in-progress state a release someone's `npx` picks up. A tag is the moment a
+# person says "this one".
+#
+# The order matters and each step exists because of a way this class of release has
+# failed elsewhere: everything green BEFORE the tag becomes a public artifact, the tag
+# checked against the manifest it claims to ship, and the CHANGELOG section extracted
+# with a pattern that accepts every heading shape this repository has used — a
+# mismatch there fails the job AFTER the tag is public, and the tag then looks
+# delivered while nothing shipped.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing vX.Y.Z tag to release and publish"
+        required: false
+        type: string
+
+jobs:
+  release:
+    if: vars.RELEASE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Resolve the tag
+        id: t
+        run: |
+          set -eu
+          TAG="${{ inputs.tag || github.ref_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "ver=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.t.outputs.tag }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: The suite, on the tag
+        run: npm test
+
+      - name: Every guard, watched failing, on the tag
+        # The validate workflow also runs here, but it is a SEPARATE workflow: a red
+        # run there cannot stop this one from publishing. Re-running the gate is what
+        # makes "green before the tag" true of the artifact actually being released.
+        run: node scripts/negative-self-test.js
+
+      - name: Anthropic's own gate, on both plugins and the marketplace
+        run: |
+          set -eu
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+          claude plugin validate . --strict
+          claude plugin validate ./plugins/prowl --strict
+          claude plugin validate ./plugins/prowl-cli --strict
+
+      - name: The tag must match the package it claims to ship
+        run: |
+          set -eu
+          PV=$(node -p "require('./package.json').version")
+          if [ "$PV" != "${{ steps.t.outputs.ver }}" ]; then
+            echo "tag ${{ steps.t.outputs.tag }} does not match package.json $PV" >&2
+            exit 1
+          fi
+          echo "tag and package.json agree on $PV"
+
+      - name: Extract this version's CHANGELOG section
+        run: |
+          set -eu
+          VER="${{ steps.t.outputs.ver }}"
+          # Accepts `## v1.2.3`, `## 1.2.3`, `## [1.2.3] - date`, `## [v1.2.3]`.
+          # The terminator requires a full semver, so a `### Fixed` subsection cannot
+          # end the section early.
+          awk -v ver="$VER" '
+            $0 ~ "^## \\[?v?" ver "\\]?([^0-9]|$)" { on = 1; next }
+            on && /^## \[?v?[0-9]+\.[0-9]+\.[0-9]+/ { exit }
+            on { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          # An empty section means the notes nobody wrote, and a release nobody can read.
+          test -s RELEASE_NOTES.md
+          head -5 RELEASE_NOTES.md
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          TAG="${{ steps.t.outputs.tag }}"
+          # Idempotent, and that matters most on the run you did not plan. If publish
+          # fails — a bad NPM_TOKEN is the usual reason, and it cannot be verified in
+          # advance because a secret is write-only — the fix is to re-run this
+          # workflow. With `create` alone the re-run dies here, on a release that
+          # already exists, and the actual failure never gets another attempt.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TAG" --notes-file RELEASE_NOTES.md
+            echo "release $TAG already existed; notes refreshed"
+          else
+            gh release create "$TAG" --title "$TAG" --notes-file RELEASE_NOTES.md --verify-tag
+          fi
+
+      - name: The installer runs from a clean directory, as npx would
+        run: |
+          set -eu
+          PKG=$(npm pack --silent)
+          mkdir -p /tmp/smoke && cd /tmp/smoke
+          npm init -y >/dev/null
+          npm install --no-save "$GITHUB_WORKSPACE/$PKG" >/dev/null
+          # A tarball missing `bin/` or `plugins/` installs fine and fails on the
+          # user's machine. Exercise the paths that read them.
+          npx --no-install prowl-skill --version
+          npx --no-install prowl-skill --help | grep -q statusline
+          # Assert on output this command always produces. `would copy` appears only
+          # where the plugin is absent, which makes it an assertion about the runner
+          # rather than about the tarball.
+          npx --no-install prowl-skill status | grep -q 'API key'
+          npx --no-install prowl-skill plain --dry-run | grep -q 'no hooks'
+          echo "the packed tarball installs and runs"
+
+      - name: Publish to npm
+        if: vars.PUBLISH_NPMJS == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -eu
+          # Republishing an existing version is an error, and an error here reads as a
+          # broken release when it usually means "this ran twice". Say which it is.
+          VER=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          if npm view "$NAME@$VER" version >/dev/null 2>&1; then
+            echo "$NAME@$VER is already on npm — nothing to publish."
+            exit 0
+          fi
+          npm publish --provenance --access public
