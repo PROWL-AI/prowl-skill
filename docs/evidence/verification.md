@@ -64,3 +64,9 @@ reading a line. None of them was a fixture.
 |---|---|
 | The hooks have never fired from Claude Code's own dispatcher. They have run as processes against real payload shapes and real response bodies, and the installed copy was driven end to end by hand — but the matcher firing, and the terminal honouring `terminalSequence`, are unwitnessed | Restart Claude Code with `prowl@prowl` enabled, make one free Prowl call, then read `~/.prowl/status/<session_id>.json` |
 | The status line has never been rendered by Claude Code | Wire the `statusLine` block from the skill and look at the bottom of the terminal |
+
+**This was measured, not assumed.** The plugin was installed mid-session and a real
+free call (`prowl_list_tools`, category `ai`) was made straight afterwards:
+`~/.prowl/status/` gained **no** new file. Plugins and their hooks are loaded at
+session start, so the dispatcher in the session that built this could never have
+carried them. The restart is a human step and it is the only one this change has.
