@@ -4,3 +4,6 @@ node_modules/
 .env
 .env.*
 *_mcp_token
+
+# pipeline run ledger (per-run, not history)
+.task-pipeline/

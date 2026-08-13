@@ -1,13 +1,13 @@
 # Prowl Plugin
 
-**One MCP. 408 market-intelligence tools for your agent.**
+**One MCP. 448 market-intelligence tools for your agent.**
 
 [![Live](https://img.shields.io/badge/prowl.chat-live-00c853?style=flat-square)](https://prowl.chat)
 [![MCP](https://img.shields.io/badge/MCP-prowl.chat%2Fmcp-6e40c9?style=flat-square)](https://prowl.chat/mcp)
-[![Tools](https://img.shields.io/badge/tools-408-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
+[![Tools](https://img.shields.io/badge/tools-448-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **408 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **448 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
 
 This repo is the **installable plugin**: a namespaced `/prowl:*` skill plus a ready-made MCP config. Install it and your coding agent wires up the rest itself.
 
@@ -73,7 +73,33 @@ Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `
 curl https://prowl.chat/mcp/health
 ```
 
-Then, from your agent, run `prowl_list_tools` (free) → 408 tools grouped by category.
+Then, from your agent, run `prowl_list_tools` (free) → 448 tools grouped by category.
+
+## The status widget
+
+A `prowl_analyze` call runs 30 seconds to 5 minutes and an async session runs longer.
+For all of that time the terminal shows a spinner, and what it cost appears only
+inside a response body nobody reads. The `prowl` plugin ships hooks that fix both.
+
+**It calls no API.** Every figure it shows was already in a response your agent
+received, so the widget costs nothing and cannot spend your wallet to draw itself.
+
+On by default, once the plugin is installed:
+
+- a **progress bar in the dock/taskbar** when `prowl_session_status` reports a
+  fraction, taken down when the session reports a terminal status
+- a **one-time notice** when a call fails or the wallet blocks one — once per kind of
+  failure, so an agent retrying five times does not produce five notices
+
+Opt-in, one edit to `~/.claude/settings.json` (a plugin cannot ship a status line):
+
+```
+prowl · ⟳ analyze 1:12 · 12 calls 11✓ 1✗ · $0.31 · ctx 42% · ▸ call_tool✓ tool_info✓ search_tools✓
+```
+
+See the [`prowl` skill](plugins/prowl/skills/prowl/SKILL.md#the-status-widget) for the
+two commands. State lives in `~/.prowl/status/<session_id>.json` beside your token, is
+pruned after seven days, and the plugin never writes to your Claude Code settings.
 
 ## What your agent gets
 
