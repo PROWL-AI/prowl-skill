@@ -25,7 +25,7 @@
   manifest declares `statusLine`. The script finds its library whether it runs inside
   the plugin or copied to a stable path, and prints nothing when it finds neither.
 
-- **Tests and CI**, which this repository had none of. 88 checks across six suites,
+- **Tests and CI**, which this repository had none of. 89 checks across six suites,
   including end-to-end fixtures that run the real hook scripts as processes against
   empty, malformed and absent payloads — a hook that throws breaks the turn of every
   session that installed the plugin. Plus `scripts/negative-self-test.js`: six guards,
@@ -48,6 +48,15 @@
   written from the documentation and the documentation describes the inner shape.
   Found by calling a free tool and reading the response. `test/live_shapes_test.js` now
   holds the captured bodies, and the envelope-following is planted against.
+
+- **A negative self-test that fired on a coin flip.** The lock guard proved itself on
+  Node 18 and not on Node 22, and CI is what said so: the fixture detected the lost
+  update probabilistically, because eight processes launched in sequence can also
+  finish in sequence. A start barrier and five writes per writer make it deterministic
+  — verified three times in each direction.
+
+- **The widget said `1 calls`.** Eighteen render fixtures, every one of them using a
+  plural count. Found by driving the installed plugin by hand and reading the line.
 
 ### Notes
 
