@@ -1,13 +1,13 @@
 # Prowl Plugin
 
-**One MCP. 408 market-intelligence tools for your agent.**
+**One MCP. 448 market-intelligence tools for your agent.**
 
 [![Live](https://img.shields.io/badge/prowl.chat-live-00c853?style=flat-square)](https://prowl.chat)
 [![MCP](https://img.shields.io/badge/MCP-prowl.chat%2Fmcp-6e40c9?style=flat-square)](https://prowl.chat/mcp)
-[![Tools](https://img.shields.io/badge/tools-408-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
+[![Tools](https://img.shields.io/badge/tools-448-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **408 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **448 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
 
 This repo is the **installable plugin**: a namespaced `/prowl:*` skill plus a ready-made MCP config. Install it and your coding agent wires up the rest itself.
 
@@ -73,7 +73,7 @@ Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `
 curl https://prowl.chat/mcp/health
 ```
 
-Then, from your agent, run `prowl_list_tools` (free) → 408 tools grouped by category.
+Then, from your agent, run `prowl_list_tools` (free) → 448 tools grouped by category.
 
 ## What your agent gets
 

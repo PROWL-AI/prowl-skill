@@ -1,7 +1,7 @@
 {
   "name": "prowl",
   "version": "0.2.1",
-  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (408 tools).",
+  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (448 tools).",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",
@@ -22,8 +22,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Prowl",
-    "shortDescription": "One MCP, 408 market-intelligence tools",
-    "longDescription": "Connect the hosted Prowl MCP server to give any agent 408 market-intelligence tools — SEO, ads, SERP, scraping, AI — plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet.",
+    "shortDescription": "One MCP, 448 market-intelligence tools",
+    "longDescription": "Connect the hosted Prowl MCP server to give any agent 448 market-intelligence tools — SEO, ads, SERP, scraping, AI — plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet.",
     "developerName": "Prowl",
     "category": "Research",
     "capabilities": [

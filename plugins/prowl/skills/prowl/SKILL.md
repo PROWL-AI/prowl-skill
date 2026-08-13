@@ -1,6 +1,6 @@
 ---
 name: prowl
-description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 408 market-intelligence tools (SEO, backlinks, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword/backlink data, analyzing ad creative or spend, comparing pricing or funnels, validating a product idea, or any task that needs real market data instead of guesses.
+description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 448 market-intelligence tools (SEO, backlinks, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword/backlink data, analyzing ad creative or spend, comparing pricing or funnels, validating a product idea, or any task that needs real market data instead of guesses.
 license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
@@ -10,7 +10,7 @@ metadata:
 
 # Prowl — market intelligence for your agent
 
-Prowl is a single MCP endpoint that exposes **408 market-intelligence API tools** across 15 providers (DataForSEO, SearchAPI, SerpApi, SpyFu, Majestic, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …) plus the full Prowl pipeline — `prowl_analyze`, async research sessions, recurring schedules, artifacts and exports. Call real data instead of guessing.
+Prowl is a single MCP endpoint that exposes **448 market-intelligence API tools** across 15 providers (DataForSEO, SearchAPI, SerpApi, SpyFu, Majestic, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …) plus the full Prowl pipeline — `prowl_analyze`, async research sessions, recurring schedules, artifacts and exports. Call real data instead of guessing.
 
 - MCP URL: `https://prowl.chat/mcp`
 - Transport: Streamable HTTP
@@ -34,7 +34,7 @@ For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp 
 
 | Tool | Purpose | Cost |
 |------|---------|------|
-| `prowl_list_tools` | Browse the 408 tools by category | free |
+| `prowl_list_tools` | Browse the 448 tools by category | free |
 | `prowl_search_tools` | Semantic search over the catalog | free |
 | `prowl_tool_info` | JSON input schema + estimated cost for one tool | free |
 | `prowl_call_tool` | Invoke any single tool | metered |
@@ -74,7 +74,7 @@ Call `prowl_list_playbooks` (free) for what each one covers.
 ## Verify
 
 1. List MCP tools; confirm `prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`.
-2. Run `prowl_list_tools` (free) → 408 tools grouped by category.
+2. Run `prowl_list_tools` (free) → 448 tools grouped by category.
 3. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`.
 
 ## Billing

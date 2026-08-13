@@ -1,7 +1,7 @@
 {
   "name": "prowl-cli",
-  "version": "0.1.0",
-  "description": "Prowl CLI skill: drive the 408-tool Prowl market-intelligence catalog from the shell with @prowl-ai/cli — no MCP server required.",
+  "version": "0.1.1",
+  "description": "Prowl CLI skill: drive the 448-tool Prowl market-intelligence catalog from the shell with @prowl-ai/cli — no MCP server required.",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",
@@ -22,7 +22,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Prowl CLI",
-    "shortDescription": "408 market-intelligence tools from the shell",
+    "shortDescription": "448 market-intelligence tools from the shell",
     "longDescription": "Teaches the agent the Prowl command-line client (@prowl-ai/cli): install and key handling, the free catalog commands, metered tool calls, analyze tiers with hard cost caps, playbooks, JSON output and exit codes. Useful wherever a shell is available and no MCP server is configured.",
     "developerName": "Prowl",
     "category": "Research",

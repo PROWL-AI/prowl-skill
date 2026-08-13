@@ -1,0 +1,16 @@
+{
+  "name": "@prowl-ai/prowl-skill",
+  "private": true,
+  "version": "0.3.0",
+  "description": "The Prowl plugin: install/usage skills, the hosted MCP config, and the live status widget that makes a running Prowl call visible in the terminal.",
+  "scripts": {
+    "test": "node test/run.js",
+    "check:tools": "node scripts/check-tool-count.js"
+  },
+  "repository": "github:PROWL-AI/prowl-skill",
+  "homepage": "https://prowl.chat/",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

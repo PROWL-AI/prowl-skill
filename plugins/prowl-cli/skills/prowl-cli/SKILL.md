@@ -1,16 +1,16 @@
 ---
 name: prowl-cli
-description: Drives the Prowl CLI (`@prowl-ai/cli`) — a shell client for Prowl exposing 408 market-intelligence tools (SEO, backlinks, 60+ SERP engines, ads, web scraping, AI) plus the full Prowl research pipeline, billed pay-as-you-go from a USD wallet. Use when a shell is available and market data is needed in a script, a CI job or a one-off command — competitor research, SERP and keyword data, backlink profiles, ad creative research, pricing and demand validation — without configuring an MCP server.
+description: Drives the Prowl CLI (`@prowl-ai/cli`) — a shell client for Prowl exposing 448 market-intelligence tools (SEO, backlinks, 60+ SERP engines, ads, web scraping, AI) plus the full Prowl research pipeline, billed pay-as-you-go from a USD wallet. Use when a shell is available and market data is needed in a script, a CI job or a one-off command — competitor research, SERP and keyword data, backlink profiles, ad creative research, pricing and demand validation — without configuring an MCP server.
 license: MIT
 compatibility: Requires Node.js 18+, the `@prowl-ai/cli` npm package (installed globally or run via npx) and a Prowl API key; makes network calls to prowl.chat.
 metadata:
   author: prowl.chat
-  version: "0.1.0"
+  version: "0.1.1"
 ---
 
 # Prowl CLI — market intelligence from the shell
 
-`@prowl-ai/cli` is the command-line client for [Prowl](https://prowl.chat): one binary that reaches **408 market-intelligence tools** across 15 providers, plus the Prowl analysis pipeline. Every metered call debits a USD wallet.
+`@prowl-ai/cli` is the command-line client for [Prowl](https://prowl.chat): one binary that reaches **448 market-intelligence tools** across 15 providers, plus the Prowl analysis pipeline. Every metered call debits a USD wallet.
 
 Use this skill when a shell is available. Use the sibling `prowl` plugin instead when the agent should call Prowl as MCP tools inside its own tool loop.
 
@@ -38,7 +38,7 @@ Requires Node.js >= 18.
 
 ```
 prowl auth status | login | logout
-prowl tools list                            # 408 tools by category (free)
+prowl tools list                            # 448 tools by category (free)
 prowl tools search "<query>"                # semantic catalog search (free)
 prowl tools info <tool_name>                # input schema + estimated cost (free)
 prowl call <tool_name> --params '<json>'    # invoke one tool (wallet debit)
