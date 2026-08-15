@@ -1,6 +1,6 @@
 {
   "name": "@prowl-ai/prowl-skill",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "The Prowl plugin: install/usage skills, the hosted MCP config, and the live status widget that makes a running Prowl call, its progress and its cost visible in the terminal. This package is the installer CLI.",
   "keywords": [
     "prowl",
