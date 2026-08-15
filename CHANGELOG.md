@@ -1,5 +1,47 @@
 # Changelog
 
+## v0.5.0 — 2026-08-15
+
+Package `@prowl-ai/prowl-skill` 0.5.0 · plugins `prowl` 0.4.0, `prowl-cli` 0.2.0.
+
+Both skills were audited against the running server rather than against each
+other, and both were wrong in ways an agent acts on.
+
+### Fixed
+
+- **`prowl_analyze` takes `execution_mode`, not `tier`.** The `prowl` skill said
+  `tier`, and had said it for two releases. An unknown key is ignored, so an
+  agent following the skill sent `tier: "deep"`, got a **basic** run, was billed
+  as basic, and reported back as if it had run deep. The tiers table now names
+  the real parameter, for `prowl_start_session` and `prowl_schedule_create` too.
+
+- **The subscription gate was documented nowhere.** `deep` requires an Exploit+
+  subscription and `max` a Blackops+ one, and a key without it is **not
+  refused** — the run silently resolves to `basic` and bills as basic
+  (`mcp_server/models.effective_tier`). Both skills now state it where the tier
+  is chosen, and point at `prowl_get_wallet` / `prowl wallet` for checking
+  before the spend rather than inferring it from a thin report afterwards.
+
+- **`prowl_list_tools` no longer returns names by default.** The verify step
+  promised "448 tools grouped by category"; the server returns category counts
+  and gives names only for `names=true` or a single `category`. The step now
+  describes what actually comes back.
+
+### Added
+
+- **`prowl_get_wallet`** in the tool table, the billing section and the verify
+  steps. It is the only surface that can read a balance for a `prowl_` key:
+  `GET /api/v1/wallet` returns the same figures but decodes a JWT, and no REST
+  route on the server accepts an API key. The registered MCP tool count moves
+  22 → 23 with it.
+
+- **The `prowl-cli` skill was rewritten for the CLI it now documents.**
+  `@prowl-ai/cli` 0.2.0 covers all 21 logical MCP tools rather than six —
+  sessions, playbooks, schedules, artifacts, export, stats and the error feed —
+  so the command list, the long-run guidance (`session start --watch` for CI)
+  and the exit-code advice all changed. The old page documented `prowl wallet`
+  as working; it could not.
+
 ## v0.4.0 — 2026-08-13
 
 Package `@prowl-ai/prowl-skill` 0.4.0 · plugins `prowl` 0.3.0, `prowl-cli` 0.1.1

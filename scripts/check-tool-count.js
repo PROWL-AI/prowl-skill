@@ -106,8 +106,14 @@ function verdict(server, rows, allowed) {
   return { ok: mismatches.length === 0, mismatches };
 }
 
-/** The registered-MCP-tool count, which lives beside the catalogue count on purpose. */
-const ALLOWED = [22];
+/**
+ * The registered-MCP-tool count, which lives beside the catalogue count on purpose.
+ *
+ * Moved 22 -> 23 on 2026-08-15 with `prowl_get_wallet`. Only the current value is
+ * listed: keeping the outgoing one would exempt a page that still says 22 from
+ * every check in this file, which is the drift this file exists to catch.
+ */
+const ALLOWED = [23];
 
 async function main() {
   let text;
