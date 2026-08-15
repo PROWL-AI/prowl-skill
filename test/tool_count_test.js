@@ -14,7 +14,7 @@ const HOSTED = `
 Prowl is **the MCP that turns any AI agent into a research analyst**. It exposes
 **448 marketing intelligence API tools** (across DataForSEO, Majestic, …).
 
-## Tools (23 registered tools — 21 logical + 2 legacy aliases → 448 API tools)
+## Tools (22 registered tools — 20 logical + 2 legacy aliases → 448 API tools)
 `;
 
 it('reads one count out of the hosted document', () => {
@@ -51,7 +51,7 @@ it('does not mistake neighbouring numbers for counts', () => {
 });
 
 it('the registered-MCP-tool count is not drift', () => {
-  const rows = [{ file: 'SKILL.md', counts: [23, 448] }];
+  const rows = [{ file: 'SKILL.md', counts: [22, 448] }];
   assert.strictEqual(check.verdict(448, rows, check.ALLOWED).ok, true);
 });
 

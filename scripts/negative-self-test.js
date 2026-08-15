@@ -140,7 +140,11 @@ for (const plant of PLANTS) {
 
 const after = suite();
 if (!after.ok) {
+  // Print what was red. Announcing damage without showing it sends the reader to
+  // `npm test`, which by then is green again — and a check that cannot be reproduced
+  // is a check that gets explained away.
   process.stdout.write('FAIL: the suite is red after every restore — the tree was left damaged.\n');
+  process.stdout.write(after.out);
   process.exit(1);
 }
 

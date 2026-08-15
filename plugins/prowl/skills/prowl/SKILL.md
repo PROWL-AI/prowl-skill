@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
   author: prowl.chat
-  version: "0.4.0"
+  version: "0.4.1"
 ---
 
 # Prowl — market intelligence for your agent
@@ -32,7 +32,7 @@ For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp 
 
 ## Core tools
 
-23 MCP tools front the catalog. The ones that matter day to day:
+22 MCP tools front the catalog. The ones that matter day to day:
 
 | Tool | Purpose | Cost |
 |------|---------|------|
@@ -40,8 +40,7 @@ For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp 
 | `prowl_search_tools` | Semantic search over the catalog | free |
 | `prowl_tool_info` | JSON input schema + estimated cost for one tool | free |
 | `prowl_call_tool` | Invoke any single tool | metered |
-| `prowl_analyze` | Full multi-agent research report in one shot | metered, capped by `execution_mode` |
-| `prowl_get_wallet` | Balance + which `execution_mode`s this key can run | free |
+| `prowl_analyze` | Full multi-agent research report in one shot | metered, sized by `execution_mode` |
 | `prowl_list_playbooks` | The 8 fixed, persona-tuned report shapes | free |
 | `prowl_start_session` / `prowl_session_status` / `prowl_get_session` / `prowl_list_sessions` | Async deep research: kick off, poll, read back | metered |
 | `prowl_generate_artifact` / `prowl_export_report` | Infographic, PDF, PPTX, audio, video; Markdown/HTML export | metered |
@@ -59,26 +58,38 @@ Recommended flow: `prowl_search_tools` → `prowl_tool_info` → `prowl_call_too
 
 Full reference: [https://prowl.chat/mcp/skill.md](https://prowl.chat/mcp/skill.md)
 
+## Resources and prompts
+
+The server also serves three read-only resources — `prowl://tools` (catalogue
+summary: category counts and names, not schemas), `prowl://stats` and
+`prowl://report` — and three prompt templates: `competitor_analysis`
+(`domain`, optional `focus_areas`), `seo_audit` (`domain`) and
+`ad_creative_research` (`domain`, optional `platforms`).
+
+The resources read the **default** session's cache, because the resource protocol
+carries no per-call context. To inspect one session, call `prowl_get_stats` with
+its `session_id` instead.
+
 ## Tiers
 
 `prowl_analyze`, `prowl_start_session` and `prowl_schedule_create` take
-**`execution_mode`** — not `tier`. The parameter sets the tool budget and the
-hard provider-cost cap for the run. An unknown key is ignored, so a call that
-sends `tier` runs at the default and reports back as if it had not.
+**`execution_mode`** — not `tier`. The parameter sizes the run. An unknown key is
+ignored, so a call that sends `tier` runs at the default and reports back as if it
+had not.
 
-| `execution_mode` | Use for | Provider cost cap | Requires |
-|------|---------|------------------:|----------|
-| `basic` | One question, fast turnaround | $2.50 | — |
-| `deep` | Full competitive report | $8.00 | Exploit+ subscription |
-| `max` | Exhaustive, research-grade | $18.00 | Blackops+ subscription |
-
-You are never billed more than the reserved hold.
+| `execution_mode` | Use for | Calls per run | Time | Requires |
+|------|---------|--------------:|------|----------|
+| `basic` | One question, fast turnaround | 20–100 | 30–90s | — |
+| `deep` | Full competitive report, evidence-verified | 40–300 | 3–5 min | Exploit+ subscription |
+| `max` | Exhaustive, claims adversarially checked | 60–400 | 5–10 min | Blackops+ subscription |
 
 **A key without the subscription is not refused — it is downgraded.** `deep` and
 `max` resolve to `basic`, and the run executes and bills as `basic` with a notice
-on the stream. Call `prowl_get_wallet` (free) before spending: it returns
-`entitlement.available_execution_modes` for the current key, and
-`downgraded_modes` for the ones that would silently change.
+on the stream. Nothing free reports the entitlement in advance: no registered tool
+answers it and no REST route accepts an API key (see *Billing*). So on a key whose
+plan you do not know, ask the human which subscription is active before spending on
+`deep` or `max` — the alternative is inferring it afterwards from a thinner report
+than the one you asked for.
 
 ## Playbooks
 
@@ -92,20 +103,26 @@ Call `prowl_list_playbooks` (free) for what each one covers.
 
 1. List MCP tools; confirm `prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`.
 2. Run `prowl_list_tools` (free) → category counts summing to `total_tools: 448`. (It returns counts, not names — pass `names=true` for the full list.)
-3. Run `prowl_get_wallet` (free) → the key is valid, and the balance and available modes come back.
-4. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`.
+3. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`. It answers
+   `status`, `server`, `version`, `transport` and `endpoint` — and nothing else, so
+   do not read a tool count out of it.
 
 ## Billing
 
 - **Subscription pool** (plan renewal, burns at period end) + **extra pool** (top-ups, never expires).
 - Each `prowl_call_tool` response carries a `billing` object (`estimated_cost_usd`, `actual_cost_usd`, `debited`).
 - Insufficient balance blocks the call before it runs — top up at MCP Home.
-- Read the balance with **`prowl_get_wallet`** (free). The REST route
-  `GET /api/v1/wallet` returns the same figures but decodes a **JWT**, and a
-  `prowl_` API key is not one — no REST endpoint accepts an API key, so MCP is
-  the only surface that can answer this key.
-- A scoped key can be capped below the wallet (`key_limits` in the same
-  response); a batch planned against the balance alone can still be refused.
+- **A `prowl_` key cannot read its own balance.** No registered tool returns one,
+  `GET /api/v1/wallet` decodes a **JWT** and answers `401` to an API key, and
+  `GET /api/v1/wallet/balance` does not exist (`404`). Spend is legible only
+  afterwards — from the `billing` object on each call, from `prowl_get_stats`, or
+  by a human at MCP Home. Plan a batch against a figure the human supplies, not
+  one this key can fetch.
+- A scoped key can also be capped below the wallet — per-category allowlists and
+  daily or lifetime spend limits are set when the key is minted. Their refusals are
+  **terminal**: `Error: API key is not allowed to call tools in category` and
+  `Error: API key spend limit reached` will not succeed on retry, and a revoked key
+  answers `401` while an IP outside the allowlist answers `403`.
 
 ## The status widget
 

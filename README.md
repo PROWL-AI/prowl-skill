@@ -136,10 +136,10 @@ pruned after seven days, and the plugin never writes to your Claude Code setting
 ## What your agent gets
 
 - **22 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.
-- **3 tiers** for `prowl_analyze` — `basic` / `deep` / `max`, each with a hard provider-cost cap ($2.50 / $8.00 / $18.00). You are never billed more than the reserved hold.
+- **3 execution modes** for `prowl_analyze` — `basic` (20–100 calls, 30–90s), `deep` (40–300, 3–5 min, needs Exploit+) and `max` (60–400, 5–10 min, needs Blackops+). A key without the subscription is downgraded to `basic` rather than refused.
 - **8 playbooks** — `geo-visibility-audit`, `competitor-teardown`, `content-engine`, `local-and-reputation`, `mobile-aso`, `amazon-marketplace`, `idea-validation`, `channel-economics-audit`.
 - **Verified reports** — a typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.
-- **Exports** — Markdown, PDF, PPTX, audio brief, video.
+- **Artifacts and exports** — infographic, PDF, PPTX, audio brief and video from `prowl_generate_artifact`; Markdown and HTML from `prowl_export_report`. Both read the report cached against the `session_id` that produced it.
 
 Prefer a terminal? Install the `prowl-cli` plugin above, or use [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli) directly.
 

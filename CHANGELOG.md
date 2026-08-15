@@ -1,5 +1,74 @@
 # Changelog
 
+## v0.5.1 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.1 · plugins `prowl` 0.4.1, `prowl-cli` 0.2.1.
+
+**v0.5.0 shipped a tool that does not exist.** It was audited against the server's
+source; this release audits it against the server. `tools/list` on
+`https://prowl.chat/mcp/` was called and read — 22 names, and the dump is quoted in
+`docs/evidence/verification.md`.
+
+Most of v0.5.0 was right and is kept: `execution_mode` in all three tools, the
+subscription downgrade, `names` on `prowl_list_tools`, `prowl_list_sessions`, the
+artifact and export enums. What follows is the correction, not a revert.
+
+### Fixed
+
+- **`prowl_get_wallet` is gone from both skills, and the count is back to 22.** It
+  exists in the server source — the entitlement fields quoted for it are real there —
+  and the deployment does not register it. A skill naming a tool the server does not
+  serve teaches an agent a call that fails. It returns when `tools/list` returns it.
+
+- **`ALLOWED` in `scripts/check-tool-count.js` is back to `[22]`.** v0.5.0 had moved it
+  to match the tool above, so the one check standing between a remembered number and a
+  shipped one had been taught to agree with the claim it exists to test. It reported
+  *448 tools; 8 file(s) agree* while eight files carried a count the server has never
+  served. The incident is now written into the constant's own comment.
+
+- **No page implies a `prowl_` key can read its balance, because none can.**
+  `GET /api/v1/wallet` decodes a JWT and answers `401` to an API key;
+  `GET /api/v1/wallet/balance` — which the published CLI's `prowl wallet` calls —
+  answers `404`. The neighbouring `401` is what proves that `404` means *absent*
+  rather than *unauthorised*. Spend is legible only afterwards: the `billing` object,
+  `prowl_get_stats`, or a human at MCP Home.
+
+- **The three tier caps are removed.** `$2.50 / $8.00 / $18.00` were stated as hard
+  provider-cost caps and appear in no tool schema, in the hosted `skill.md`, or at
+  `/api/v1/tools/pricing`; `prowl.chat/pricing` is a `404`. Calls per run, wall-clock
+  and the subscription each mode needs — all of which the sources do carry — replace
+  them.
+
+- **The `prowl-cli` page says which CLI it documents, above the install line.** It
+  describes `0.2.0`; npm serves `0.1.0` and `0.1.1`, whose dispatcher knows six verbs.
+  A reader following v0.5.0 would `npm install -g` a package and then be told to run
+  commands it answers `Unknown command` to.
+
+- **The guard suite prints what it judged red.** Its final check announced *the tree
+  was left damaged* and showed nothing, sending the reader to `npm test`, which was
+  green. See `B-08`: the failure is intermittent and undiagnosed, and it now leaves
+  evidence.
+
+### Added
+
+- **Resources and prompts**, which no page here had mentioned: three resources
+  (`prowl://tools`, `prowl://stats`, `prowl://report`) and three prompt templates
+  (`competitor_analysis`, `seo_audit`, `ad_creative_research`), read from
+  `resources/list` and `prompts/list` on the running server.
+
+- **Scoped-key refusals are marked terminal.** A category allowlist or a spend limit
+  produces an `Error:` no retry fixes; a revoked key answers `401` and an IP outside
+  the allowlist `403`.
+
+- **`docs/evidence/backlog.md`** — the board this project never had. Eight open rows,
+  including the two checks whose absence let this through.
+
+### Known, and not fixed here
+
+**Do not release while `@prowl-ai/cli` 0.2.0 is unpublished** — board `B-01`. The
+`prowl-cli` page is correct about the CLI in its repository and wrong about the one on
+npm, and the warning at the top of the page is a stopgap, not the fix.
+
 ## v0.5.0 — 2026-08-15
 
 Package `@prowl-ai/prowl-skill` 0.5.0 · plugins `prowl` 0.4.0, `prowl-cli` 0.2.0.

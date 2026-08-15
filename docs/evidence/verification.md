@@ -115,4 +115,63 @@ rather than waiting for the result.
 | What | How to close it |
 |---|---|
 | An npm token with publish rights to `@prowl-ai` was typed into a terminal in clear text and is recorded in one session transcript on disk. The shell histories are clean and the temp file was removed | Revoke it at npmjs.com. The release is published and the token is not needed until the next tag; issue the next one through the GitHub web UI |
-| The hooks have still never fired from Claude Code's own dispatcher (carried from run 1) | Restart Claude Code, make one free Prowl call, read `~/.prowl/status/` |
+| The hooks have still never fired from Claude Code's own dispatcher (carried from run 1) | Restart Claude Code, make one free Prowl call, read `~/.prowl/status/` — **closed in run 3, see below** |
+
+---
+
+# Run 3 — the skills against the running server
+
+**Run** `sync the skills with the live tool contract` · 2026-08-16 · branch
+`fix/skill-server-divergences`.
+
+Every row below was confirmed against `tools/list` on `https://prowl.chat/mcp/`,
+called through this machine's MCP gateway so the upstream key never left its
+`secrets/`. The dump is the run's ground truth; nothing here was read out of the
+hosted document, which is stale in five ways (board `B-05`).
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| S-01 | The skills name `execution_mode`, not `tier` | `prowl_analyze(query, execution_mode, session_id, playbook_id)`, `prowl_start_session(query, execution_mode, title)`, `prowl_schedule_create(query, trigger_type, execution_mode, playbook_id, cadence, run_at_hour)` — read from the live schemas | verified |
+| S-02 | The subscription gate and its silent downgrade are stated where the mode is chosen | `prowl_analyze`'s own description: *"'deep'/'max' require an active subscription — a caller without one is downgraded to basic and notified"* | verified |
+| S-03 | Artifacts and exports are no longer conflated | `artifact_type` ∈ `infographic\|pdf\|pptx\|audio\|video`, `theme` ∈ `prowl\|prowl-gold\|prowl-light`, `format` ∈ `markdown\|html` — from the live `$defs` | verified |
+| S-04 | `prowl_list_tools` is described as it answers | live schema carries `category, limit, offset, names`; the old text promised names by default | verified |
+| S-05 | `prowl_list_sessions` is in the tool table | present in the live list, `(limit, offset)` | verified |
+| S-06 | Resources and prompts are documented | `resources/list` → `prowl://tools`, `prowl://stats`, `prowl://report`; `prompts/list` → `competitor_analysis`, `seo_audit`, `ad_creative_research`. Three of each, read live | verified |
+| S-07 | Scoped-key refusals are marked terminal, and `401`/`403` distinguished | hosted `skill.md` error table; the `401` shape reproduced by calling `/mcp` without a key (`-32001`) | verified |
+| S-08 | A `prowl_` key cannot read its own balance, and no page implies it can | `/api/v1/wallet` → `401` (JWT), `/api/v1/wallet/balance` → `404`, and no registered tool returns one. The neighbouring `401` is what proves the `404` means *absent* and not *unauthorised* | verified |
+| S-09 | The three tier caps are gone, replaced by sourced figures | `$2.50/$8.00/$18.00` appear in no schema, not in the hosted document, not at `/api/v1/tools/pricing` (which answers per-tool prices only); `prowl.chat/pricing` → `404`. Calls-per-run and wall-clock come from the hosted document's own mode descriptions | verified |
+| S-10 | The registered count is 22, and the guard says so | `probe.sh /mcp/prowl` → *"инструментов: 22"*; the full dump lists 22 names with no `prowl_get_wallet`. `ALLOWED` back to `[22]`; `npm run check:tools` → *448 tools; 9 file(s) agree* | verified |
+| S-11 | The `prowl-cli` page says which CLI it documents, above the install line | npm serves `0.1.0` and `0.1.1` only; `PROWL-AI/prowl-cli` carries one tag, `v0.1.1`; its `src/index.js` dispatcher handles `auth\|tools\|call\|analyze\|wallet\|version` | verified |
+
+## What went wrong, and it is the worst kind
+
+**A tool that does not exist was written into a shipped skill — and the guard was
+moved to agree with it.** The previous commit on this branch added
+`prowl_get_wallet` to the tool table, the billing section and the verify steps,
+raised the stated count to 23, and edited `ALLOWED` in `check-tool-count.js` from
+`[22]` to `[23]` with a comment explaining the move. `tools/list` returns 22 names
+and none of them is `prowl_get_wallet`.
+
+The claim was not invented. It is in the server source — the same commit cites
+`mcp_server/models.effective_tier` for the downgrade, which is real and correct.
+**It is deployed nowhere.** Source and deployment are different sources of truth, and
+only one of them answers an agent's call.
+
+What makes it worse than a wrong sentence: the repository's single defence against a
+remembered number is that constant, and it had been re-anchored rather than
+consulted. A check taught to agree with the claim it exists to test is not a weakened
+check, it is a deleted one that still prints `OK`. It printed `OK` — *448 tools;
+9 file(s) agree* — with 23 in eight files and 22 on the server.
+
+The same commit rewrote `prowl-cli` for a CLI version that is not published. Same
+shape, different registry: written against a working tree, shipped to people who
+install from npm.
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| Nothing checks a tool name, an argument or an enum. This run found the drift by hand; the next one will only find it if someone thinks to look | Board `B-02` — `check-contract.js` against a live `tools/list` |
+| Nothing binds `plugins/prowl-cli` to the `@prowl-ai/cli` version it documents. The two agreeing at `0.1.1` was a coincidence | Board `B-03` — `check-cli.js` |
+| The status line has never been rendered by Claude Code (carried from run 1). The state file it reads is now confirmed written by real sessions | Board `B-07` — wire the `statusLine` block and look at the terminal |
+

@@ -109,11 +109,18 @@ function verdict(server, rows, allowed) {
 /**
  * The registered-MCP-tool count, which lives beside the catalogue count on purpose.
  *
- * Moved 22 -> 23 on 2026-08-15 with `prowl_get_wallet`. Only the current value is
- * listed: keeping the outgoing one would exempt a page that still says 22 from
- * every check in this file, which is the drift this file exists to catch.
+ * Only the current value is listed: keeping an outgoing one would exempt a page that
+ * still states it from every check in this file, which is the drift this file exists
+ * to catch.
+ *
+ * It was moved to 23 on 2026-08-15 for a `prowl_get_wallet` that does not exist, and
+ * moved back on 2026-08-16 after `tools/list` was called and answered 22. That is the
+ * failure mode worth naming here: this constant is the only thing standing between a
+ * remembered number and a shipped one, so **re-anchoring it to match a new claim
+ * destroys the check instead of updating it**. Move it only after reading a live
+ * `tools/list`, and say in the commit which call was read.
  */
-const ALLOWED = [23];
+const ALLOWED = [22];
 
 async function main() {
   let text;
