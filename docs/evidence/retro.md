@@ -78,6 +78,7 @@ a mechanical check or lost the paths it names.)*
 | 2026-08-15 | The skills against the server's *source*; package 0.5.0, released | `8977023` (PR #5) | yes — it shipped a tool that does not exist |
 | 2026-08-16 | The same skills against the *running* server; package 0.5.1 | PR #6 | yes — see below |
 | 2026-08-16 | The CLI page against the CLI source; package 0.5.2 | PR #7 | no — seven defects found in an existing artifact, none introduced by the run |
+| 2026-08-16 | `check-contract.js`, and the tool that shipped while it was being written; package 0.5.3 | PR #8 | yes — see below |
 
 ---
 
@@ -208,3 +209,43 @@ check now **prints the suite output it judged red**. It printed nothing before, 
 is why the reader's next move was `npm test`, which by then was green — a failure that
 cannot be reproduced is a failure that gets explained away, and it very nearly was.
 Board `B-08` carries the diagnosis.
+
+## 2026-08-16 (third run) — the world moved under a correction, and that is the case for the check
+
+**Symptom.** `check-contract.js` was written to catch the v0.5.0 defect: a tool the
+pages name and the server does not register. Its first run against the live server went
+red in the opposite direction — *ALLOWED is [22]; the server registers 23*. In the hour
+between v0.5.1's measurement and this one, the deployment had shipped
+`prowl_get_wallet`. The hosted document grew by ~2.8 KB in the same window.
+
+**Surfaced at** stage 5, by the artefact under construction. **Owned by** nobody: this
+is not a defect anybody introduced.
+
+**Root cause, and it is worth stating carefully because the obvious reading is wrong.**
+The obvious reading is *v0.5.1 was hasty*. It was not: three independent sources agreed,
+two of them live calls, and the removal was correct at the moment it was made. The real
+cause is that **agreement among sources at a point in time is not a standing fact about
+a service somebody else deploys.** A measurement has a timestamp; a document does not.
+Everything written from a measurement decays at a rate nobody in this repository
+controls.
+
+**Fix, by grade.**
+
+- *Mechanical (taken):* the check itself, run on every CI build, which converts a
+  one-time measurement into a standing one. `ALLOWED` is now compared against the server
+  rather than trusted — the guard has a guard, and that is the direct answer to standing
+  instruction #6.
+- *Mechanical (taken, and this one is a discipline note):* an argument check was
+  attempted twice and cut twice. The first flagged twelve response fields on clean
+  pages; the second flagged the sentence written to warn readers away from the very
+  defect it was hunting. Both are recorded in the file rather than deleted quietly,
+  because the third person to have the idea should start from what failed. Board `B-10`.
+- *Standing instructions:* none added. #5 already says *ask the surface that answers
+  users*; this run's finding is its corollary — **ask it again**, which is what a check
+  in CI does and a document cannot.
+
+**The thing worth not losing.** Between the two runs, the correction was written in
+strong language: *a tool that does not exist*. It was true. An hour later it was not.
+The verification ledger keeps both measurements with their timestamps rather than
+rewriting the first, because a record that quietly becomes right is indistinguishable
+from one that was never wrong — and the second is what a reader assumes.

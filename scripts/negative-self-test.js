@@ -76,6 +76,24 @@ const PLANTS = [
     expect: 'shadow',
   },
   {
+    // The contract check's own credibility. It exists because a tool that did not
+    // exist shipped in three places; on its first live run it reported the operator's
+    // token FILE as an unregistered tool, on two pages that were fine. A check whose
+    // findings are mostly wrong is one nobody reads, so the exclusion is guarded.
+    name: 'the contract check starts calling the token file a tool',
+    file: 'scripts/check-contract.js',
+    apply: (t) => t.replace('/(?<![/\\w])prowl_[a-z][a-z0-9_]*\\b/g', '/prowl_[a-z][a-z0-9_]*\\b/g'),
+    expect: 'token file',
+  },
+  {
+    // The guard's guard. `ALLOWED` was re-anchored to match a claim rather than a
+    // measurement, and the count check then printed OK against eight wrong files.
+    name: 'the count constant stops being checked against the server',
+    file: 'scripts/check-contract.js',
+    apply: (t) => t.replace('if (Array.isArray(allowed) && !allowed.includes(registered)) {', 'if (false) {'),
+    expect: 'the guard has a guard',
+  },
+  {
     // The version lives in seven places, and a release that tags one of them while
     // shipping another is the failure this check exists to make impossible.
     name: 'a plugin stops agreeing with itself about its version',

@@ -18,12 +18,31 @@ computed or fetched here, never remembered.
 
 ```bash
 npm test                            # every test/*_test.js, offline
-node scripts/negative-self-test.js  # five guards, each watched failing
+node scripts/negative-self-test.js  # every guard, each watched failing
 npm run check:tools                 # the stated count against the live server
+npm run check:contract              # the stated NAMES against a live tools/list
 ```
 
-`check:tools` is deliberately outside `npm test`: it reaches prowl.chat, and the suite
-must work on a plane.
+`check:tools` and `check:contract` are deliberately outside `npm test`: they reach
+prowl.chat, and the suite must work on a plane. Both report *unknown* and exit 0 when
+they cannot ask — unreachable, or, for `check:contract`, no credential. A check that
+could not reach the server has learned nothing, and reporting that as drift is how a
+check gets ignored.
+
+`check:contract` needs a key, because `tools/list` answers `-32001` without one. It
+takes `PROWL_API_KEY`, or `PROWL_MCP_HEADER="Name: value"` when an MCP gateway in
+front holds the key itself:
+
+```bash
+PROWL_MCP_URL=http://127.0.0.1:4000/mcp/prowl \
+PROWL_MCP_HEADER="x-agw-key: $(cat ~/.config/agentgateway/secrets/roles/full)" \
+  npm run check:contract
+```
+
+**Never run two `negative-self-test.js` at once** — it plants defects in the working
+tree and restores them, and two instances corrupt each other's restore. It also fails
+intermittently for reasons not yet understood (`B-08` on the board); when it does, it
+now prints the suite output it judged red.
 
 ## Invariants
 

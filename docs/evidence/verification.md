@@ -207,3 +207,41 @@ artifact, theme and export enums (`report.js:6-8`), and the tier values
 and did not — the check that would have caught all of it is `B-03`, which does not
 exist yet and is the next task.
 
+
+---
+
+# Run 5 — the check, and what it caught on its first run
+
+**Run** `scripts/check-contract.js` · 2026-08-16 · PR #8.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| K-01 | Every `prowl_*` name the shipped pages state is registered | `check:contract` against the live server via the machine's MCP gateway: *23 tools; 2 page(s) name only tools it serves* | verified |
+| K-02 | A name the server does not register fails the check | Watched failing twice for real, before either was fixed: `prowl_get_wallet` when it was absent, and `prowl_mcp_token` — the operator's token *file*, a false positive the exclusion now prevents. Fixtured in `contract_test.js` and planted against in the guard suite | verified |
+| K-03 | A stated MCP-tool count that is not the registered count fails | `contract_test.js`; watched failing live as *states 22 MCP tools; the server registers 23* | verified |
+| K-04 | `ALLOWED` in `check-tool-count.js` is checked against the server, not trusted | `contract_test.js` *the guard has a guard*; watched failing live as *ALLOWED is [22]; the server registers 23*, and planted against | verified |
+| K-05 | An omission is reported and never fails the gate | `contract_test.js`: a page mentioning a tool but none of its enum values yields one note and `ok: true`. Live, it reported the two artifact themes, which were then documented | verified |
+| K-06 | No credential is *unknown*, never a pass | Run with `HOME=/nonexistent` and no key: `UNKNOWN`, exit 0. Fixtured in `auth()` | verified |
+| K-07 | The check runs where the key is not on disk | `PROWL_MCP_HEADER="x-agw-key: …"` against `http://127.0.0.1:4000/mcp/prowl`; the upstream key never left the gateway's `secrets/` | verified |
+| K-08 | `prowl_get_wallet` is registered, and the pages say what it returns | `tools/list` returns it with an empty input schema; the hosted document's section 21 gives the response shape quoted in both pages | verified |
+
+## What the run found that it was not looking for
+
+**The deployment changed underneath a correction.** v0.5.1 removed `prowl_get_wallet`
+after three sources agreed it did not exist — the hosted document, this session's
+registered tool list, and a live `tools/list` through the gateway. Roughly an hour
+later the same call returned 23 names including it, and the hosted document had grown
+by ~2.8 KB.
+
+Both states were measured; neither was a mistake. The lesson is not *the correction
+was wrong* — it is that **agreement among sources at a point in time is not a standing
+fact about a service somebody else deploys**, and the only durable answer is a check
+that re-asks on every run. That check now exists, and this is how it announced itself.
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| Nothing binds `plugins/prowl-cli` to the `@prowl-ai/cli` version it documents (carried) | Board `B-03` — `check-cli.js`, the next task |
+| No check catches an argument name the server does not accept — the class that started all of this. Two attempts written, run and cut | Board `B-10`; the fix is a machine-readable association in the pages, not a third regex |
+| `negative-self-test.js` still fails intermittently for reasons unknown (carried) | Board `B-08`; it now prints what it judged red |

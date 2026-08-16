@@ -113,14 +113,19 @@ function verdict(server, rows, allowed) {
  * still states it from every check in this file, which is the drift this file exists
  * to catch.
  *
- * It was moved to 23 on 2026-08-15 for a `prowl_get_wallet` that does not exist, and
- * moved back on 2026-08-16 after `tools/list` was called and answered 22. That is the
- * failure mode worth naming here: this constant is the only thing standing between a
- * remembered number and a shipped one, so **re-anchoring it to match a new claim
- * destroys the check instead of updating it**. Move it only after reading a live
- * `tools/list`, and say in the commit which call was read.
+ * Its history is the argument for the rule. It was moved to 23 on 2026-08-15 for a
+ * `prowl_get_wallet` that the deployment did not serve, moved back to 22 on 2026-08-16
+ * after `tools/list` was called and answered 22, and moved to 23 again hours later
+ * when the same call answered 23 because the tool had actually shipped. Same value,
+ * twice, and only one of the three moves was legitimate — the difference is entirely
+ * whether a live `tools/list` was read first.
+ *
+ * So: **re-anchoring this to match a claim destroys the check instead of updating
+ * it.** Move it only after reading a live `tools/list`, and name that call in the
+ * commit. `scripts/check-contract.js` now compares this constant against the server
+ * on every CI run, so the guard has a guard.
  */
-const ALLOWED = [22];
+const ALLOWED = [23];
 
 async function main() {
   let text;

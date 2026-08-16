@@ -1,5 +1,72 @@
 # Changelog
 
+## v0.5.3 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.3 · plugins `prowl` 0.4.2, `prowl-cli` 0.2.3.
+
+**`prowl_get_wallet` shipped, and this release is the check that noticed.**
+`scripts/check-contract.js` was written to catch the v0.5.0 defect — a tool named in
+the pages that the server does not register. On its first run against the live server
+it went red in the *opposite* direction: the deployment now registers **23** tools and
+the pages said 22. The hosted `skill.md` grew from 27,934 to 30,751 bytes in the same
+window and now carries the tool as its section 21.
+
+So v0.5.1 was right when it was measured and stale within the hour. That is the
+argument for the check rather than against the correction: three sources agreeing at a
+point in time is not a standing fact about a service somebody else deploys.
+
+### Added
+
+- **`scripts/check-contract.js`** and `npm run check:contract`. Every `prowl_*` name
+  the shipped pages state, and every `<n> MCP tools` claim, against a live
+  `tools/list`. **It fails on a falsehood and reports an omission** — saying a tool
+  exists when it does not teaches an agent a call that fails, while leaving one
+  undocumented is an editorial choice, and a check that treats those alike gets
+  silenced for the second before it can catch the first.
+
+  It also checks `ALLOWED` in `check-tool-count.js` against the server, so **the guard
+  has a guard**. That constant is the one that was re-anchored to match a claim in
+  v0.5.0; nothing sat above it.
+
+  No credential, or an unreachable endpoint, is *unknown* and exit 0. It takes
+  `PROWL_API_KEY`, or `PROWL_MCP_HEADER="Name: value"` for an MCP gateway holding the
+  key — which is how it was run on the machine that wrote it, because a check whose
+  author never watched it answer is not evidence.
+
+- **`test/contract_test.js`** — 11 checks, offline, including the ALLOWED case and the
+  rule that an omission must never fail the gate. Two new plants in the guard suite:
+  the token-file exclusion and the ALLOWED comparison, each watched failing.
+
+- **A CI job**, `contract`, non-blocking like `tool-count`: on a fork the secret is
+  absent, and *unknown* is the honest answer there.
+
+### Fixed
+
+- **`prowl_get_wallet` is back in both skills**, this time with the contract the
+  server actually serves: no parameters, and a response carrying
+  `subscription_balance_usd`, `extra_balance_usd`, `total_available_usd`, an
+  `entitlement` block with `available_execution_modes` and `downgraded_modes`, and
+  `key_limits`. `prowl wallet` in the CLI page is no longer marked broken, because it
+  is not. Board `B-04` and `B-06` close; [prowl-cli#2](https://github.com/PROWL-AI/prowl-cli/issues/2)
+  closes with them.
+
+- **`ALLOWED` is `[23]`, moved by re-reading `tools/list`** rather than to match a
+  claim. Its comment now carries all three moves and which of them was legitimate.
+
+- The artifact themes (`prowl`, `prowl-gold`, `prowl-light`) are named — the only
+  omission the new check reported on the shipped pages.
+
+### Attempted twice and cut
+
+An argument check — the obvious one, since the defect that started this was `tier` for
+`execution_mode`. Both versions were written, run live, and removed: matching every
+snake_case token flagged twelve **response** fields on pages with nothing wrong, and
+matching a verb-of-passing near a backticked identifier flagged exactly two things,
+one of them the sentence that warns readers *not* to send `tier`. A rule that fires on
+the sentence written to prevent the defect is worse than no rule. Both attempts are
+recorded in the file so the next person does not write a third regex; board `B-10`
+carries the real fix, which is to stop asking prose a question about meaning.
+
 ## v0.5.2 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.2 · plugins `prowl` 0.4.1 (unchanged), `prowl-cli`

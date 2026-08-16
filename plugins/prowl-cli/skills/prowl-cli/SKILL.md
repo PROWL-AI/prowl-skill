@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires Node.js 18+, the `@prowl-ai/cli` npm package (installed globally or run via npx) and a Prowl API key; makes network calls to prowl.chat.
 metadata:
   author: prowl.chat
-  version: "0.2.2"
+  version: "0.2.3"
 ---
 
 # Prowl CLI — market intelligence from the shell
@@ -77,7 +77,7 @@ OUTPUT (debits the wallet; needs a report on the same --session)
 
 ACCOUNT (free)
   prowl auth status | login | logout
-  prowl wallet                              # BROKEN against production — see below
+  prowl wallet                              # balance + the modes this key can run
   prowl stats [--session <id>]
   prowl errors [--hours n] [--tool <name>] [--severity <s>] [--source <s>]
                [--class <c>] [--limit n] [--offset n]
@@ -113,16 +113,22 @@ response confirms them.
 
 **A key without the subscription is not refused — it is downgraded to `basic`, and the run executes and bills as `basic`.** Nothing in the output announces this loudly.
 
-**`prowl wallet` is the command meant to warn you, and against production it fails.**
-It calls the MCP tool `prowl_get_wallet`, which exists in the Prowl server's source and
-which the deployment at `prowl.chat` **does not register** — `tools/list` returns 22
-names and that is not one of them. Nor is there a REST fallback: `/api/v1/wallet`
-decodes a JWT and answers `401` to a `prowl_` key, and `/api/v1/wallet/balance` answers
-`404`. So until the server ships the tool, **ask the human** which subscription is
-active before spending on `--tier deep` or `--tier max`, and read spend afterwards with
-`prowl stats`.
+**`prowl wallet` is the command that tells you before you spend.** It calls the MCP
+tool `prowl_get_wallet` — free, no parameters — and prints the balance, the modes this
+key can actually run, and the ones that would silently downgrade:
 
-Check `prowl tools info <tool_name>` before a `call` in a loop — it is free and carries the estimated cost. Confirm with the human before running `--tier max` or a batch that could exceed a few dollars.
+```
+Balance: $17.40 available (subscription $12.40 + extra $5.00)
+Modes:   basic, deep
+         --tier max would run as basic (needs an active subscription)
+```
+
+It is the only surface that answers a `prowl_` key: `/api/v1/wallet` decodes a JWT and
+returns `401` to an API key, and `/api/v1/wallet/balance` does not exist. It also
+reports a scoped key's own caps, so a batch can be refused while the wallet still has
+funds.
+
+Check `prowl wallet` before a batch and `prowl tools info <tool_name>` before a `call` in a loop — both are free. Confirm with the human before running `--tier max` or a batch that could exceed a few dollars.
 
 ## Long runs
 
@@ -163,7 +169,7 @@ prowl call extract_domain_from_url --params '{"url":"https://stripe.com/pricing"
 prowl analyze "competitors of stripe.com" --tier basic --json
 prowl analyze "is there demand for an AI receipt scanner" --playbook idea-validation --tier deep
 prowl session start "teardown of vercel.com" --tier deep --watch
-prowl stats --json
+prowl wallet --json
 ```
 
 ## When to use
