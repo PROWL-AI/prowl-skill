@@ -70,3 +70,17 @@ jobs:
         env:
           PROWL_API_KEY: ${{ secrets.PROWL_API_KEY }}
         run: npm run check:contract
+
+  cli:
+    runs-on: ubuntu-latest
+    # Reads the published tarball of the package the prowl-cli page describes. Needs no
+    # secret — npm is public — but still non-blocking: a registry outage says nothing
+    # about the change under test.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: the page describes the CLI npm actually serves
+        run: npm run check:cli

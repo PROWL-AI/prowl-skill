@@ -94,6 +94,23 @@ const PLANTS = [
     expect: 'the guard has a guard',
   },
   {
+    // The CLI page says `prowl` constantly in prose — "the sibling `prowl` plugin" —
+    // and only the fenced blocks are the command list. Widen the scan and every noun
+    // after the word becomes a verb the CLI is accused of not shipping.
+    name: 'the CLI check starts reading verbs out of prose',
+    file: 'scripts/check-cli.js',
+    apply: (t) => t.replace('for (const block of fencedBlocks(text)) {', 'for (const block of [text]) {'),
+    expect: 'fenced blocks only',
+  },
+  {
+    // A page describing an unpublished binary is a state of the world, not a defect,
+    // and it is fatal at exactly one moment: the tag.
+    name: 'an unpublished CLI stops blocking the release',
+    file: 'scripts/check-cli.js',
+    apply: (t) => t.replace('ok: failures.length === 0 && !strict,', 'ok: failures.length === 0,'),
+    expect: 'refuse to tag ahead of the binary',
+  },
+  {
     // The version lives in seven places, and a release that tags one of them while
     // shipping another is the failure this check exists to make impossible.
     name: 'a plugin stops agreeing with itself about its version',

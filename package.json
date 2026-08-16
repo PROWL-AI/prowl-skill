@@ -1,6 +1,6 @@
 {
   "name": "@prowl-ai/prowl-skill",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "The Prowl plugin: install/usage skills, the hosted MCP config, and the live status widget that makes a running Prowl call, its progress and its cost visible in the terminal. This package is the installer CLI.",
   "keywords": [
     "prowl",
@@ -31,7 +31,8 @@
   "scripts": {
     "test": "node test/run.js",
     "check:tools": "node scripts/check-tool-count.js",
-    "check:contract": "node scripts/check-contract.js"
+    "check:contract": "node scripts/check-contract.js",
+    "check:cli": "node scripts/check-cli.js"
   },
   "files": [
     "bin",

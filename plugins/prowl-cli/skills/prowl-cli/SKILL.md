@@ -5,7 +5,11 @@ license: MIT
 compatibility: Requires Node.js 18+, the `@prowl-ai/cli` npm package (installed globally or run via npx) and a Prowl API key; makes network calls to prowl.chat.
 metadata:
   author: prowl.chat
-  version: "0.2.3"
+  version: "0.2.4"
+  # The @prowl-ai/cli release this page describes. NOT the plugin version above:
+  # they are different things that happened to both read 0.2.x, and nothing
+  # compared them until scripts/check-cli.js did.
+  documents_cli: "0.2.0"
 ---
 
 # Prowl CLI — market intelligence from the shell
@@ -22,14 +26,12 @@ Prowl API keys (`prowl_...`) are **billing-bearing** — treat them as secrets a
 npm install -g @prowl-ai/cli
 ```
 
-**This page documents CLI `0.2.0`, and `0.2.0` is not on npm yet** — the published
-versions are `0.1.0` and `0.1.1`, whose only verbs are `auth`, `tools`, `call`,
-`analyze`, `wallet` and `version`. Everything below outside that set will answer
-`Unknown command` until the release lands. Check with `prowl version` before believing
-this page, and prefer the sibling `prowl` plugin meanwhile.
+**This page documents CLI `0.2.0`**, which is what npm serves as `latest`. On `0.1.1`
+or older only `auth`, `tools`, `call`, `analyze`, `wallet` and `version` exist and
+everything else answers `Unknown command` — `prowl version` says which you have.
 
-Every command, flag, exit code and default below was read from
-`PROWL-AI/prowl-cli` at `master` `b526d96`, not from that release's `--help`.
+Every command, flag, exit code and default below was read out of the published
+tarball, and `npm run check:cli` in this repository re-reads it on every CI run.
 
 The human generates a key at [prowl.chat](https://prowl.chat) (MCP Home → API keys), then supplies it one of four ways. They are tried in this order, and the first non-empty one wins:
 

@@ -245,3 +245,31 @@ that re-asks on every run. That check now exists, and this is how it announced i
 | Nothing binds `plugins/prowl-cli` to the `@prowl-ai/cli` version it documents (carried) | Board `B-03` — `check-cli.js`, the next task |
 | No check catches an argument name the server does not accept — the class that started all of this. Two attempts written, run and cut | Board `B-10`; the fix is a machine-readable association in the pages, not a third regex |
 | `negative-self-test.js` still fails intermittently for reasons unknown (carried) | Board `B-08`; it now prints what it judged red |
+
+---
+
+# Run 6 — the CLI page bound to the CLI
+
+**Run** `scripts/check-cli.js` · 2026-08-16 · PR #9.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| L-01 | The page names the CLI release it describes, in a field, distinct from the plugin's own version | `metadata.documents_cli: "0.2.0"` beside `metadata.version: "0.2.4"`; `documentedVersion()` fixtured. `version_sync_test` still finds exactly seven surfaces — its regex anchors on `^\s*version:` and does not see the new key | verified |
+| L-02 | The field and the prose cannot drift apart | `verdict` fails when they disagree; fixtured | verified |
+| L-03 | A verb the page states and the CLI does not ship fails | fixtured; and the real case is on record — two releases of this page listed seven verbs a six-verb binary did not have | verified |
+| L-04 | A verb the CLI ships and the page omits is a note, not a failure | fixtured. Live: **zero** notes — the page states exactly the thirteen verbs `0.2.0` ships | verified |
+| L-05 | Verbs come from fenced blocks, not prose | fixtured against `Use the sibling \`prowl\` plugin`, which a wider scan turns into a verb called *plugin*; planted against in the guard suite | verified |
+| L-06 | Exit codes are compared | fixtured; live, the page's `0..5` matches the shipped `EXIT` map | verified |
+| L-07 | An unpublished documented version is `BLOCKED`, not failed — and fatal at the tag | fixtured both ways; `release.yml` runs `--release` before it validates a manifest; planted against | verified |
+| L-08 | A parser that finds nothing says so | `main()` reports UNKNOWN below four verbs rather than declaring every documented command missing | verified |
+| L-09 | `@prowl-ai/cli` 0.2.0 is published | `npm view` → versions `0.1.0, 0.1.1, 0.2.0`, `dist-tags.latest = 0.2.0`; verbs read from the tarball: analyze, artifact, auth, call, errors, export, playbooks, schedule, session, stats, tools, version, wallet | verified |
+| L-10 | The check is green against the real package | `npm run check:cli` → *documents @prowl-ai/cli@0.2.0, which npm serves, and states only commands it ships* | verified |
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| **The `contract` CI job reports `UNKNOWN` on every run** — the `PROWL_API_KEY` repository secret is not set, so the check that would have caught this session's worst defect is inert in CI. It is green, and green here means *nothing was checked* | Set the secret. Until then the check only runs where somebody runs it by hand |
+| No check catches an argument name the server does not accept (carried) | Board `B-10` |
+| `negative-self-test.js` still fails intermittently, undiagnosed (carried) | Board `B-08` |
+| The status line has never been rendered by Claude Code (carried from run 1) | Board `B-07` |

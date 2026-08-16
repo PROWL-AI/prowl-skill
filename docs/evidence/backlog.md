@@ -9,8 +9,6 @@ at the close of every run; a row that has waited gets louder on its own.
 
 | id | What | Source | Blast | Effort | Age | Pri | Status |
 |---|---|---|---:|---:|---:|---:|---|
-| B-01 | **Publish `@prowl-ai/cli` 0.2.0, then release this package.** `plugins/prowl-cli` documents `0.2.0`; npm serves `0.1.1`, whose dispatcher knows six verbs. Releasing first hands `npx` users a page whose commands answer `Unknown command` | run 3 | 3 | 2 | 0 | 1.5 | **blocks release** |
-| B-03 | `scripts/check-cli.js` — the documented CLI surface against the published tarball, and a field binding the plugin to the CLI version it documents. B-01 exists because nothing noticed the gap | run 3 | 3 | 2 | 0 | 1.5 | open |
 | B-09 | `prowl --help` states hard provider-cost caps of $2.50 / $8.00 / $18.00 and `src/commands/analyze.js` cites `prowl.chat/pricing` as their origin. That page is a `404` and no server response carries the figures. Either publish the page or drop the caps from the CLI banner — right now the CLI and this repository's skills disagree in public | run 4 | 1 | 1 | 0 | 1.0 | open, upstream |
 | B-05 | The hosted `skill.md` is stale in five measured ways: it counts 21 tools in its health example and 22 in its heading, omits `prowl_schedule_pause`, omits `limit`/`offset`/`names` on `prowl_list_tools` and `limit`/`offset` on `prowl_schedule_list`, and documents health fields the endpoint no longer returns. It is the document `check-tool-count.js` reads | run 3 | 2 | 1 | 0 | 2.0 | open, upstream |
 | B-07 | The status line has never been rendered by Claude Code — only the state file it reads has been verified. Carried from run 1 | run 1 | 1 | 1 | 2 | 3.0 | open |
@@ -21,6 +19,8 @@ at the close of every run; a row that has waited gets louder on its own.
 
 | id | What | Closed by |
 |---|---|---|
+| B-01 | Publish `@prowl-ai/cli` 0.2.0, then release | Published 2026-08-16 and `latest` on npm; its thirteen verbs and exit codes match the page exactly. `check-cli.js --release` now refuses a tag if this ever recurs |
+| B-03 | `scripts/check-cli.js` and the plugin↔CLI binding | Shipped in 0.5.4: the check, `metadata.documents_cli`, 12 offline checks, two guard plants, a CI job and a release gate |
 | B-02 | `scripts/check-contract.js` | Shipped in 0.5.3 with 11 offline checks, two guard plants, and a CI job. It caught a live divergence on its first run |
 | B-04 | `prowl wallet` broken in both CLI versions | `prowl_get_wallet` was deployed on 2026-08-16; `tools/list` now returns it. The 0.2.0 command works as written. [prowl-cli#2](https://github.com/PROWL-AI/prowl-cli/issues/2) closed |
 | B-06 | `prowl_get_wallet` returns when the deployment registers it | It did. Restored to both skills in 0.5.3 with the contract the server serves |
