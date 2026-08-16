@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # Callable, so `release.yml` can depend on it. Re-implementing these checks as
+  # steps inside the release is what let a sibling project tag v0.4.1 while its own
+  # validate run for that tag was red — npm served it four minutes later. A release
+  # that cannot be stopped by a red suite is not gated by one.
+  workflow_call:
 
 jobs:
   suite:
@@ -40,6 +45,24 @@ jobs:
           done < <(find . -name '*.json' -not -path './node_modules/*' -not -path './.git/*')
           echo "parsed $found manifest(s)"
           test "$found" -ge 7
+
+  plugin-validate:
+    runs-on: ubuntu-latest
+    # Anthropic's own gate, as its own job. The `manifests` job above only proves the
+    # JSON parses; it says nothing about whether Claude Code would load these plugins.
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: claude plugin validate --strict, on both plugins and the marketplace
+        run: |
+          set -eu
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+          claude plugin validate ./plugins/prowl --strict
+          claude plugin validate ./plugins/prowl-cli --strict
+          claude plugin validate . --strict
 
   tool-count:
     runs-on: ubuntu-latest

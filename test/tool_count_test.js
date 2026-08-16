@@ -77,4 +77,21 @@ it('this repository agrees with itself right now', () => {
   assert.ok(rows.length >= 8, `expected at least 8 files to state it, found ${rows.length}`);
 });
 
+it('reads owner/repo out of every repository shape npm allows', () => {
+  assert.strictEqual(check.forgeSlug({ repository: 'github:PROWL-AI/prowl-skill' }), 'PROWL-AI/prowl-skill');
+  assert.strictEqual(check.forgeSlug({ repository: { url: 'git+https://github.com/PROWL-AI/prowl-skill.git' } }), 'PROWL-AI/prowl-skill');
+  assert.strictEqual(check.forgeSlug({}), null, 'no repository field must be silent, not a crash');
+});
+
+it('the forge description is judged like any other surface', () => {
+  // It said 408 for two months after every file on disk said 448 — drift on the one
+  // published surface the file walk cannot see, which is why it is a row now.
+  const stale = check.statedCounts('… connects any agent to 408 market-intelligence tools (SEO, ads).');
+  assert.deepStrictEqual(stale, [408]);
+  const rows = [{ file: 'github:PROWL-AI/prowl-skill (repo description)', counts: stale }];
+  const v = check.verdict(448, rows, check.ALLOWED);
+  assert.strictEqual(v.ok, false);
+  assert.deepStrictEqual(v.mismatches[0].stated, [408]);
+});
+
 report('tool count');

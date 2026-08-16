@@ -1,5 +1,80 @@
 # Changelog
 
+## v0.5.5 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.5 · plugins `prowl` 0.4.3, `prowl-cli` 0.2.5.
+
+A release you start by editing one line, a gate that can actually stop it, and the
+gaps a `/skill-audit` run found. Against the Agent Skills standard both skills scored
+**0 GAP / 9 PASS** before this; what follows is the surrounding repository catching up
+to them.
+
+### Added
+
+- **`auto-tag.yml`.** A push to `main` whose `package.json` version has no matching
+  `v*` tag cuts the tag, which starts `release.yml` exactly as a hand-pushed tag
+  would. **A merge that does not bump the version publishes nothing** — this repository
+  decided against publishing on every merge and the reason still holds, so the trigger
+  is the version bump inside the merge, not the merge. Deciding to release stays a
+  reviewed edit to one line; only the mechanical part after it is automated.
+
+  It refuses to tag a version with no `CHANGELOG` section, because that failure lands
+  *after* the tag is public and the tag then looks delivered while nothing shipped —
+  a class that already cost this project one false release. And it warns loudly when
+  `TAG_PAT` is unset: GitHub will not start a workflow from a tag pushed with
+  `GITHUB_TOKEN`, so without that secret the tag is created and releases nothing.
+
+- **`$schema` and `displayName`** in both plugin manifests, both Codex manifests and
+  both marketplace files. `--strict` passed without them; the standard asks for them.
+
+- **`CONTRIBUTING.md` and `SECURITY.md`**, which a public repository should not lack.
+  SECURITY leads with the thing that actually costs money: a `prowl_` key is
+  billing-bearing, a leak is somebody spending your wallet, and revoking comes before
+  tidying git history.
+
+- **npm and CI badges** in the README, beside the four that were already there.
+
+- **The forge description is now a checked surface.** `check:tools` reads the GitHub
+  repo description through the public API and judges it like any file — it had said
+  `408` for two months while every file on disk said `448`, drift on the one published
+  surface a file walk cannot see. Unreachable is a note, not drift: being rate-limited
+  says nothing about what the description says. Both descriptions corrected; the check
+  now reports **10 surfaces agreeing** rather than 9.
+
+### Fixed
+
+- **`validate` now gates `release`.** `release.yml` re-implemented the checks as its
+  own steps, so a red `validate` run could not stop a publish. It is a `needs:`
+  dependency on the reusable workflow now — the fix a sibling project made after
+  tagging v0.4.1 with its own validate red and watching npm serve it four minutes
+  later.
+
+- **`claude plugin validate --strict` is its own CI job.** The `manifests` job only
+  proved the JSON parses, which says nothing about whether Claude Code would load the
+  plugins.
+
+- **The registry is polled after publish.** The read replica lags the write master, so
+  a fresh publish can still `404` on read; "published" is a claim until it is served.
+
+### Added to both skills
+
+- **The untrusted-output rule**, which neither page carried. These tools return scraped
+  pages, SERP snippets, ad copy, reviews and LLM output built from them — text an
+  attacker can write, aimed at exactly the kind of agent that reads it. Both pages now
+  say that tool output is data: never a directive, never the chooser of the next call,
+  never a justification for spend.
+
+- **The MCP protocol version** in `compatibility`, read from a live handshake rather
+  than recalled: the server negotiates `2025-06-18` (`serverInfo` reports `prowl_mcp`
+  1.29.0, while `/mcp/health` and the hosted document still say 1.4.0 — theirs to fix).
+
+### Not done, deliberately
+
+The mechanical auditor's only two findings were `--house` rules of the `ssheleg` skill
+family: a `Use when …` opener and Russian trigger phrases in the description. These
+skills are not part of that family and ship under `@prowl-ai` to an English-speaking
+audience, so both were declined rather than silently skipped.
+
 ## v0.5.4 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.4 · plugins `prowl` 0.4.2 (unchanged), `prowl-cli`
