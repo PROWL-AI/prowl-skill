@@ -103,6 +103,14 @@ const PLANTS = [
     expect: 'fenced blocks only',
   },
   {
+    // A page pointing at a version npm has moved past passes every other check: the
+    // surface is identical and the version is still served. Only the note catches it.
+    name: 'the CLI check stops noticing a version that is no longer latest',
+    file: 'scripts/check-cli.js',
+    apply: (t) => t.replace('if (latest && documented !== latest) {', 'if (false) {'),
+    expect: 'no longer latest',
+  },
+  {
     // A page describing an unpublished binary is a state of the world, not a defect,
     // and it is fatal at exactly one moment: the tag.
     name: 'an unpublished CLI stops blocking the release',

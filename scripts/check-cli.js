@@ -114,7 +114,7 @@ function shippedExits(errorsSource) {
  * `published` is `null` when the documented version is not on npm — the `BLOCKED`
  * case, which is a state of the world rather than a defect in the page.
  */
-function verdict({ documented, prose, statedVerbs: sv, statedExits: se }, published, strict) {
+function verdict({ documented, prose, statedVerbs: sv, statedExits: se }, published, strict, latest) {
   const failures = [];
   const notes = [];
 
@@ -133,6 +133,14 @@ function verdict({ documented, prose, statedVerbs: sv, statedExits: se }, publis
       failures,
       notes,
     };
+  }
+
+  // Published, but no longer what `npm install` gives you. Not a falsehood — the
+  // command surface may be identical, which is why this is not a failure — but a page
+  // pointing at a version the registry has moved past is drift nobody sees, because
+  // every check still passes.
+  if (latest && documented !== latest) {
+    notes.push({ detail: `the page documents ${documented}; npm's latest is ${latest}` });
   }
 
   for (const v of sv) {
@@ -216,7 +224,7 @@ async function main() {
     }
   }
 
-  const v = verdict(page, published, strict);
+  const v = verdict(page, published, strict, npmState.latest);
   for (const n of v.notes) process.stdout.write(`note  ${n.detail}\n`);
 
   if (v.blocked) {

@@ -1,5 +1,52 @@
 # Changelog
 
+## v0.5.6 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.6 · plugins `prowl` 0.4.3 (unchanged), `prowl-cli`
+0.2.6.
+
+The last open item from the `/skill-audit` run, and the tail the CLI's own release left
+behind.
+
+### Added
+
+- **`test/evals/`** — the audit's item 8. `triggers.json` carries twenty queries with
+  the split written down and held fixed; `scenarios.json` carries six behavioural
+  scenarios, three per skill; `fixtures/` holds the inputs.
+
+  **Ten of the twenty queries should fire nothing**, and those are the ones worth
+  having. They are near-misses against skills that actually sit beside these two: an
+  SEO audit of your *own* site, a Google Ads audit of your *own* account, competitor
+  *UI* research, building an MCP server. A skill that wins a prompt it should lose is
+  as much a defect as one that never fires, and it is the harder one to notice because
+  it produces an answer.
+
+  Four of the six scenarios encode something that already went wrong or already costs
+  money: `execution_mode` rather than `tier`, discovery before a metered call, a
+  prompt-injection fixture with the payload in an HTML comment, and a scenario that
+  hands the agent a live-looking `prowl_` key to see whether it protects it.
+
+- **`test/evals_test.js`** — ten checks on the *shape* of that data: the negatives are
+  really half the set, the split is stated rather than inferred, both skills appear on
+  both sides of it, no fixture is named `SKILL.md`.
+
+  **It cannot tell you the skills pass, and says so.** There is no runner; the queries
+  go to a model. The README states in its own words that the evals have never been run,
+  and a test asserts that sentence is still there — because prose drifts, and the
+  pressure to delete it arrives the first time somebody wants a green.
+
+- **`check:cli` notices a version that is no longer latest.** A **note**, never a
+  failure: the command surface may be identical, so it is not a falsehood. This
+  repository was in exactly that state an hour ago — the CLI published `0.2.1` while
+  the page still documented `0.2.0`, every check green, the page quietly pointing at a
+  version `npm install` no longer gives you.
+
+### Fixed
+
+- `metadata.documents_cli` and the page's own sentence now say `0.2.1`, which is what
+  npm serves as `latest`.
+
+## v0.5.5 — 2026-08-16
 ## v0.5.5 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.5 · plugins `prowl` 0.4.3, `prowl-cli` 0.2.5.
