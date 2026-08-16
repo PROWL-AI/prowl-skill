@@ -127,6 +127,22 @@ it('fails when nothing says which CLI the page describes', () => {
   assert.match(v.failures[0].detail, /no metadata\.documents_cli/);
 });
 
+it('a published version that is no longer latest is a note, not a failure', () => {
+  // The state this repository reached the moment the CLI published 0.2.1 while the
+  // page still said 0.2.0: every check green, the surface identical, and the page
+  // quietly pointing at a version `npm install` no longer gives you.
+  const page = { documented: '0.2.0', prose: '0.2.0', statedVerbs: ['tools'], statedExits: [] };
+  const v = check.verdict(page, { verbs: ['tools'], exits: [] }, false, '0.2.1');
+  assert.strictEqual(v.ok, true, 'the surface is unchanged, so this is not a falsehood');
+  assert.match(v.notes.map((n) => n.detail).join(' '), /documents 0\.2\.0; npm's latest is 0\.2\.1/);
+});
+
+it('matching latest says nothing at all', () => {
+  const page = { documented: '0.2.1', prose: '0.2.1', statedVerbs: ['tools'], statedExits: [] };
+  const v = check.verdict(page, { verbs: ['tools'], exits: [] }, false, '0.2.1');
+  assert.strictEqual(v.notes.length, 0, 'a check that talks when nothing is wrong is one nobody reads');
+});
+
 it('an unpublished documented version is blocked, not failed — until --release', () => {
   // This was the real state for a day: the page described 0.2.0 while npm served
   // 0.1.1. It is not a defect in the page, and a red nobody reading it can clear is

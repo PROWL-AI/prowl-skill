@@ -3,7 +3,7 @@
   "name": "prowl-cli",
   "displayName": "Prowl CLI",
   "description": "Prowl CLI skill: drive the 448-tool Prowl market-intelligence catalog from the shell with @prowl-ai/cli — no MCP server required.",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",

@@ -301,3 +301,41 @@ that re-asks on every run. That check now exists, and this is how it announced i
 | **The `contract` CI job still reports `UNKNOWN`** — `PROWL_API_KEY` is not set (carried from run 6) | Set the repository secret |
 | `test/evals/` absent (audit item 8) | Board `B-11` |
 | The status line has never been rendered by Claude Code (carried from run 1) | Board `B-07` |
+
+---
+
+# Run 8 — the evals, and the version the page had already fallen behind
+
+**Run** `test/evals/ and the not-latest note` · 2026-08-16 · PR #11.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| E-01 | ≥3 behavioural scenarios per skill | `evals_test.js` asserts the floor per skill against the shipped `scenarios.json`; six exist, three each | verified |
+| E-02 | A trigger set whose negatives are near-misses | 20 queries, 10 with `expect: null`, each carrying its `why`. The negatives name the skills that actually own those prompts on this machine — `seo-aeo-audit`, `notfair:google-ads-audit`, `lazyweb`, `refero`, `mcp-builder` | verified as data; unrun, see `B-12` |
+| E-03 | Both classes on both sides of a fixed split | asserted: each side holds ≥6 rows, at least one negative, and at least one query for each skill; the split is stated in the file rather than inferred | verified |
+| E-04 | No fixture would ship as a real skill | asserted against `test/evals/fixtures/` | verified |
+| E-05 | The suite never claims the evals passed | `evals_test.js` asserts the README still contains *never been run*. The claim is load-bearing, so it is a test rather than a sentence | verified |
+| E-06 | `check:cli` reports a documented version that is no longer latest | fixtured both ways — a note when they differ, silence when they match — and planted against in the guard suite | verified |
+| E-07 | The page documents what npm serves as latest | `metadata.documents_cli` and the prose now read `0.2.1`; `npm run check:cli` → *documents @prowl-ai/cli@0.2.1, which npm serves* | verified |
+
+## The honest limit of this run
+
+**Nothing here measures skill behaviour.** The evals are data and the suite checks the
+data's shape. A green `npm test` after this change means the twenty queries are
+well-formed and the six scenarios are describable — not that either skill fires
+correctly on any of them, and not that a model refuses the injected instruction in
+`fixtures/scraped-page-with-injection.txt`.
+
+That gap is `B-12` and it is deliberate rather than deferred by accident: running them
+means three tiers × three repetitions × twenty queries against a live agent, and
+guessing the outcome would be worse than leaving the row open.
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| The evals have never been run against a model (new) | Board `B-12` |
+| **`TAG_PAT` is unset in both repositories**, so `auto-tag` cuts a tag that releases nothing. Observed twice today; both releases were dispatched by hand | Set the secret in `prowl-skill` and `prowl-cli` |
+| The `contract` CI job reports `UNKNOWN` — `PROWL_API_KEY` unset (carried) | Set the repository secret |
+| `negative-self-test.js` fails intermittently, undiagnosed (carried) | Board `B-08` |
+| The status line has never been rendered by Claude Code (carried from run 1) | Board `B-07` |

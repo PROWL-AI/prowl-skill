@@ -1,0 +1,147 @@
+{
+  "note": "Twenty queries. `expect` is the skill that should fire, or null for neither. The split is fixed across iterations on purpose: tuning on validation is how a trigger set stops measuring anything. Never paste a keyword from a failed query back into a description — that is overfitting to the query rather than fixing the category.",
+  "skills": ["prowl", "prowl-cli"],
+  "split": { "train": "items 1-12", "validation": "items 13-20" },
+  "queries": [
+    {
+      "id": 1,
+      "split": "train",
+      "query": "Who are the main competitors of stripe.com and how do they price?",
+      "expect": "prowl",
+      "why": "market research with no shell in it — the plain positive"
+    },
+    {
+      "id": 2,
+      "split": "train",
+      "query": "Pull the top 20 organic SERP results for \"invoice software\" in the UK",
+      "expect": "prowl",
+      "why": "SERP data, conversational"
+    },
+    {
+      "id": 3,
+      "split": "train",
+      "query": "Write a bash script for our CI that fetches SERP data nightly and fails if a rank drops",
+      "expect": "prowl-cli",
+      "why": "same data, and the words `bash script` and `CI` are the whole discriminator"
+    },
+    {
+      "id": 4,
+      "split": "train",
+      "query": "In a GitHub Action, check a competitor's backlink count and post it to Slack",
+      "expect": "prowl-cli",
+      "why": "a shell is the surface; the MCP tools are not reachable there"
+    },
+    {
+      "id": 5,
+      "split": "train",
+      "query": "Analyze this codebase's performance and tell me what's slow",
+      "expect": null,
+      "why": "NEAR-MISS. `analyze` and `performance` are the skill's own words, and none of it is market data"
+    },
+    {
+      "id": 6,
+      "split": "train",
+      "query": "Our checkout conversion dropped 12% last week — dig into why",
+      "expect": null,
+      "why": "NEAR-MISS. Sounds like market analysis, but the data is the product's own and lives in analytics, not in Prowl"
+    },
+    {
+      "id": 7,
+      "split": "train",
+      "query": "Validate whether there's demand for an AI receipt scanner before I build it",
+      "expect": "prowl",
+      "why": "idea validation with no domain — the case `prowl_analyze` explicitly takes"
+    },
+    {
+      "id": 8,
+      "split": "train",
+      "query": "Run an SEO audit of our own site and give me a change plan",
+      "expect": null,
+      "why": "NEAR-MISS, and the sharpest one on this machine: `seo-aeo-audit` owns this and would be the wrong loser"
+    },
+    {
+      "id": 9,
+      "split": "train",
+      "query": "What does the Prowl wallet cost per DataForSEO call?",
+      "expect": "prowl",
+      "why": "a question about the tool itself — `prowl_tool_info` is free and answers it"
+    },
+    {
+      "id": 10,
+      "split": "train",
+      "query": "Set up an MCP server for our internal docs",
+      "expect": null,
+      "why": "NEAR-MISS. `MCP server` is in the description, and the task is `mcp-builder`'s"
+    },
+    {
+      "id": 11,
+      "split": "train",
+      "query": "Schedule a weekly competitor teardown and store the reports",
+      "expect": "prowl",
+      "why": "`prowl_schedule_create` exists precisely for this; a cron job would be the wrong answer"
+    },
+    {
+      "id": 12,
+      "split": "train",
+      "query": "Compare the ad creative Nike and Adidas are running right now",
+      "expect": "prowl",
+      "why": "ad libraries, conversational"
+    },
+    {
+      "id": 13,
+      "split": "validation",
+      "query": "From the terminal, get me the estimated cost of the majestic backlink tool before I call it",
+      "expect": "prowl-cli",
+      "why": "`from the terminal` moves an otherwise-MCP question to the shell"
+    },
+    {
+      "id": 14,
+      "split": "validation",
+      "query": "How much traffic does semrush.com get and where does it come from?",
+      "expect": "prowl",
+      "why": "plain domain analytics"
+    },
+    {
+      "id": 15,
+      "split": "validation",
+      "query": "Add a nightly job to our Makefile that refreshes the competitor report",
+      "expect": "prowl-cli",
+      "why": "Makefile is a shell surface even though the noun is a report"
+    },
+    {
+      "id": 16,
+      "split": "validation",
+      "query": "Write a landing page for our new pricing tier",
+      "expect": null,
+      "why": "NEAR-MISS. `pricing` is a Prowl noun; writing copy is not research"
+    },
+    {
+      "id": 17,
+      "split": "validation",
+      "query": "Find UI patterns other fintech apps use for their onboarding",
+      "expect": null,
+      "why": "NEAR-MISS, and a real collision: `lazyweb` and `refero` own product-screen research"
+    },
+    {
+      "id": 18,
+      "split": "validation",
+      "query": "What are people saying about our competitor in App Store reviews?",
+      "expect": "prowl",
+      "why": "review mining, which the catalogue covers"
+    },
+    {
+      "id": 19,
+      "split": "validation",
+      "query": "Install the Prowl plugin and wire up the status line",
+      "expect": null,
+      "why": "NEAR-MISS. Installation is the installer CLI's job, not either skill's — a skill that fires here is answering about itself instead of doing work"
+    },
+    {
+      "id": 20,
+      "split": "validation",
+      "query": "Check my Google Ads account health and tell me what to fix",
+      "expect": null,
+      "why": "NEAR-MISS. Ads, but the caller's OWN account — `notfair:google-ads-audit` owns it; Prowl reads other people's ads"
+    }
+  ]
+}
