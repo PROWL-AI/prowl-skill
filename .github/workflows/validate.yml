@@ -54,3 +54,19 @@ jobs:
           node-version: '22'
       - name: the stated tool count still matches the server
         run: npm run check:tools
+
+  contract:
+    runs-on: ubuntu-latest
+    # Names, not just the count. Needs a key: tools/list answers -32001 without one,
+    # so on a fork — where the secret is absent — the script reports UNKNOWN and exits
+    # 0 rather than pretending the pages were checked.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: the pages name only tools the server registers
+        env:
+          PROWL_API_KEY: ${{ secrets.PROWL_API_KEY }}
+        run: npm run check:contract
