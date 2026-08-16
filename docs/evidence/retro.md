@@ -77,6 +77,7 @@ a mechanical check or lost the paths it names.)*
 | 2026-08-13 | npx distribution and tag-driven release; package 0.4.0 | `c622978` | yes — see below |
 | 2026-08-15 | The skills against the server's *source*; package 0.5.0, released | `8977023` (PR #5) | yes — it shipped a tool that does not exist |
 | 2026-08-16 | The same skills against the *running* server; package 0.5.1 | PR #6 | yes — see below |
+| 2026-08-16 | The CLI page against the CLI source; package 0.5.2 | PR #7 | no — seven defects found in an existing artifact, none introduced by the run |
 
 ---
 

@@ -175,3 +175,35 @@ install from npm.
 | Nothing binds `plugins/prowl-cli` to the `@prowl-ai/cli` version it documents. The two agreeing at `0.1.1` was a coincidence | Board `B-03` — `check-cli.js` |
 | The status line has never been rendered by Claude Code (carried from run 1). The state file it reads is now confirmed written by real sessions | Board `B-07` — wire the `statusLine` block and look at the terminal |
 
+---
+
+# Run 4 — the CLI page against the CLI
+
+**Run** `verify the prowl-cli page against @prowl-ai/cli 0.2.0` · 2026-08-16 · PR #7.
+
+Source of truth: `PROWL-AI/prowl-cli` at `master` `b526d96`, `package.json` version
+`0.2.0`, unreleased — npm serves `0.1.1`. Read from the repository, not from the
+published tarball, because the page describes the unreleased tree; that is exactly the
+gap standing instruction #5 names, so the page keeps saying so.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| C-01 | The coverage sentence is true | Every `"prowl_*"` literal in `src/` diffed against the 22-name live dump: the CLI reaches 20 of them, omits `prowl_get_tool_info` and `prowl_test_tool` (aliases of tools it already calls), and adds `prowl_get_wallet`, which the server does not register | verified |
+| C-02 | `prowl wallet` is marked broken, with the mechanism | `src/commands/wallet.js:19` calls `runTool(ctx, "prowl_get_wallet", {})`; the tool is absent from `tools/list`. REST has no fallback: `/api/v1/wallet` → `401` (JWT), `/api/v1/wallet/balance` → `404` | verified |
+| C-03 | Two timeouts, not one | `src/mcp.js:18-19` — `QUICK_TIMEOUT_MS = 60_000`, `LONG_TIMEOUT_MS = 900_000`; `mcp.js:51` defaults to quick, and only `analyze.js`, `call.js` and `report.js` (artifact, export) pass the long one | verified |
+| C-04 | Four key sources, in order | `src/config.js:25-35` — explicit, `PROWL_API_KEY`, `~/.prowl/prowl_mcp_token`, `~/.codex/prowl_mcp_token`, first non-empty wins | verified |
+| C-05 | Missing flags added | `--trigger`/`--hour` at `schedule.js:13,17`; `--limit`/`--offset` at `schedule.js:22` and `session.js:36`; `--source`/`--class`/`--offset` at `report.js:60-65`; `--server-path` at `report.js:46` | verified |
+| C-06 | `--watch` behaviour stated | `session.js:9` `DEFAULT_INTERVAL_S = 10`; `session.js:70` writes the id to stderr before the first sleep | verified |
+| C-07 | The caps disagreement is named rather than silently dropped | `src/index.js:53` states them in the shipped banner; `src/commands/analyze.js:16` cites the pricing page as their origin; `prowl.chat/pricing` → `404`. Board `B-09` | verified |
+| C-08 | The upstream defect is filed where it can be fixed | [prowl-cli#2](https://github.com/PROWL-AI/prowl-cli/issues/2) | verified |
+
+**What the page already had right, checked and left alone:** every verb in the
+dispatcher (`index.js:83-124`), the exit codes (`errors.js:1`, unchanged from 0.1.1),
+`--json`/`--key`/`--quiet`/`-h`, the four environment variables (`index.js:51`), the
+artifact, theme and export enums (`report.js:6-8`), and the tier values
+(`analyze.js:5`).
+
+**No divergence entry for this run.** Nothing was found that a check could have caught
+and did not — the check that would have caught all of it is `B-03`, which does not
+exist yet and is the next task.
+

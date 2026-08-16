@@ -1,5 +1,60 @@
 # Changelog
 
+## v0.5.2 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.2 · plugins `prowl` 0.4.1 (unchanged), `prowl-cli`
+0.2.2.
+
+The `prowl-cli` page was written from the CLI's working tree and nothing had ever
+checked it against that tree. It has now been read line by line against
+`PROWL-AI/prowl-cli` at `master` `b526d96` — every verb, flag, exit code, environment
+variable and default. The verbs, the exit codes and the enums were right. Seven other
+things were not.
+
+### Fixed
+
+- **"the CLI covers the 22 the server registers" was wrong twice.** It reaches every
+  *logical* tool and deliberately skips `prowl_get_tool_info` and `prowl_test_tool`,
+  the legacy aliases `tools info` and `call` already cover — and it calls one tool the
+  deployment does not register. The page now says what is true.
+
+- **`prowl wallet` is marked broken against production, with the reason.** 0.1.1 called
+  `GET /api/v1/wallet/balance` (a `404`); 0.2.0 calls the MCP tool `prowl_get_wallet`,
+  which `tools/list` does not return. The dependency moved rather than went away, and
+  no surface answers a balance to a `prowl_` key. Filed upstream as
+  [prowl-cli#2](https://github.com/PROWL-AI/prowl-cli/issues/2); board `B-04`.
+
+- **The timeout was stated as one number and there are two.** 15 minutes for `analyze`,
+  `call`, `artifact` and `export`; **60 seconds** for everything else. A page that
+  promises a quarter of an hour to a command that gives a minute is worse than one that
+  says nothing.
+
+- **A fourth key source, and the order they are tried in.** The page listed two;
+  `resolveKey` reads `--key`, then `PROWL_API_KEY`, then `~/.prowl/prowl_mcp_token`,
+  then `~/.codex/prowl_mcp_token`, first non-empty wins.
+
+### Added
+
+Flags the page omitted, all wired and reaching the server: `--trigger` and `--hour` on
+`schedule create`; `--limit`/`--offset` on `schedule list` and `session list`;
+`--source`, `--class` and `--offset` on `errors`; `--server-path` on `export`, with the
+warning that it writes on the *server* and returns a path the caller cannot open. The
+`--watch` default poll interval (10s) and the fact that the session id is printed
+before the first wait, so a dying poll loop still leaves the id of a run being billed.
+
+### Disagreement recorded rather than resolved
+
+`prowl --help` states hard provider-cost caps of $2.50 / $8.00 / $18.00 and the CLI
+source cites `prowl.chat/pricing` as their origin. That page is a `404` and no server
+response carries the figures, so v0.5.1 removed them from these skills. Rather than
+quietly differ from a banner the user will read, the page now names the caps, says
+where they come from and says they are unconfirmed. Board `B-09`.
+
+### Still blocking the release
+
+`B-01` — `@prowl-ai/cli` 0.2.0 is unpublished. Everything above describes it correctly
+and npm still serves `0.1.1`.
+
 ## v0.5.1 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.1 · plugins `prowl` 0.4.1, `prowl-cli` 0.2.1.
