@@ -1,5 +1,54 @@
 # Changelog
 
+## v0.5.4 — 2026-08-16
+
+Package `@prowl-ai/prowl-skill` 0.5.4 · plugins `prowl` 0.4.2 (unchanged), `prowl-cli`
+0.2.4.
+
+**The release is unblocked: `@prowl-ai/cli` 0.2.0 is published and is `latest`.** Its
+thirteen verbs and its exit codes match this page exactly, read out of the tarball
+rather than out of a repository — and the check that reads them is what this release
+adds. `B-01` closes, and the warning at the top of the page, which had become false, is
+gone.
+
+Twice in a row now a check has been written for a gap that closed while it was being
+written: `check-contract.js` shipped the hour `prowl_get_wallet` was deployed, and
+`check-cli.js` ships the hour the CLI was published. Neither is a coincidence worth
+reading into — it is what happens when documentation is finally compared against
+registries that move.
+
+### Added
+
+- **`scripts/check-cli.js`** and `npm run check:cli`. The `prowl-cli` page against the
+  package it describes: the verbs its fenced command blocks list, and the exit codes it
+  states, against `src/index.js` and `src/errors.js` in the **published tarball**. Same
+  asymmetry as the other checks — a verb the page claims and the CLI lacks is a
+  failure, a verb the CLI ships and the page omits is a note.
+
+- **`metadata.documents_cli` in the page's front-matter**, which is the missing link
+  the whole task was about. The plugin's `metadata.version` means *this plugin*;
+  `documents_cli` means *the third-party release this page describes*. They read
+  `0.2.4` and `0.2.0` and were never compared, which is exactly how a page came to
+  describe commands the published binary did not have. The check reads the field, and
+  also the same claim in prose, and fails if those two drift apart.
+
+- **A third outcome: `BLOCKED`.** When the page documents a version npm does not serve
+  there is nothing to compare against — a state of the world, not a defect in the page.
+  It exits 0 on a branch, because a red nobody reading it can clear is a red that gets
+  ignored within a week, and `--release` makes it fatal. `release.yml` runs that mode
+  before it validates a single manifest: a tag is the one moment the gap reaches
+  somebody's `npx`.
+
+- **`test/cli_contract_test.js`** — 12 offline checks, including the blocked/`--release`
+  pair and the prose-versus-field disagreement. Two more plants in the guard suite,
+  which now proves **twelve**: reading verbs out of prose, and letting an unpublished
+  CLI through the release gate. A `cli` job in CI beside `contract` and `tool-count`.
+
+### Fixed
+
+- The page's `0.2.0 is not on npm yet` warning is removed, and its provenance line now
+  points at the published tarball rather than a commit on `master`.
+
 ## v0.5.3 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.3 · plugins `prowl` 0.4.2, `prowl-cli` 0.2.3.

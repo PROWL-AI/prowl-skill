@@ -79,6 +79,7 @@ a mechanical check or lost the paths it names.)*
 | 2026-08-16 | The same skills against the *running* server; package 0.5.1 | PR #6 | yes — see below |
 | 2026-08-16 | The CLI page against the CLI source; package 0.5.2 | PR #7 | no — seven defects found in an existing artifact, none introduced by the run |
 | 2026-08-16 | `check-contract.js`, and the tool that shipped while it was being written; package 0.5.3 | PR #8 | yes — see below |
+| 2026-08-16 | `check-cli.js`, and the CLI that shipped while it was being written; package 0.5.4 | PR #9 | yes — a test of mine was vacuous, see below |
 
 ---
 
@@ -249,3 +250,32 @@ strong language: *a tool that does not exist*. It was true. An hour later it was
 The verification ledger keeps both measurements with their timestamps rather than
 rewriting the first, because a record that quietly becomes right is indistinguishable
 from one that was never wrong — and the second is what a reader assumes.
+
+## 2026-08-16 (fourth run) — the guard suite caught a test that tested nothing
+
+**Symptom.** Twelve plants, eleven proven, one refused: *the CLI check starts reading
+verbs out of prose — the suite stayed GREEN with the guard removed*. Deleting the
+fenced-block filter from `check-cli.js` changed no test result.
+
+**Root cause.** The filter was not the thing keeping prose out. `statedVerbs` anchors on
+`^\s*prowl\s+`, so the fixture's prose mention — *"Use the sibling `prowl` plugin"* —
+was excluded by the anchor whether or not fencing existed. **The assertion named a
+protection and exercised a different one**, and both were green, which is the exact
+shape of a test that has quietly stopped testing anything.
+
+The filter is not redundant: a sentence *beginning* with the word slips past the anchor.
+The fixture now contains one — *"prowl skills are installed as plugins"* — which without
+fencing yields a verb `skills` and makes the check accuse the CLI of missing a command
+the page never claimed. With the fixture that exercises it, the plant disarms it and the
+guard proves itself.
+
+**Owned by** stage 5: the test was written in the same pass as the code and asserted what
+the author believed the code did. **Caught by** stage 6, by the machinery this repository
+already had — which is the point worth keeping. Standing instruction #1 says a fixture
+encodes what its author imagined; this is that, one level up: **the fixture for a guard
+encodes what its author imagined the guard was guarding.** No new instruction, because
+the existing mechanism found it unaided and needs no reminder to keep doing so.
+
+**Fix, by grade.** *Mechanical (taken):* the fixture, plus a comment in the test naming
+what the first version failed to exercise, so the next person editing it does not
+simplify it back.

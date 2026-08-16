@@ -21,6 +21,7 @@ npm test                            # every test/*_test.js, offline
 node scripts/negative-self-test.js  # every guard, each watched failing
 npm run check:tools                 # the stated count against the live server
 npm run check:contract              # the stated NAMES against a live tools/list
+npm run check:cli                   # the prowl-cli page against the published @prowl-ai/cli
 ```
 
 `check:tools` and `check:contract` are deliberately outside `npm test`: they reach
@@ -38,6 +39,12 @@ PROWL_MCP_URL=http://127.0.0.1:4000/mcp/prowl \
 PROWL_MCP_HEADER="x-agw-key: $(cat ~/.config/agentgateway/secrets/roles/full)" \
   npm run check:contract
 ```
+
+`check:cli` needs no secret — npm is public. It has a third outcome besides pass and
+fail: **`BLOCKED`**, when the page documents a CLI version npm does not serve. That is a
+state of the world rather than a defect in the page, so it exits 0 on a branch and
+`--release` turns it fatal — which is the mode `release.yml` runs, because a tag is the
+one moment the gap reaches a user.
 
 **Never run two `negative-self-test.js` at once** — it plants defects in the working
 tree and restores them, and two instances corrupt each other's restore. It also fails

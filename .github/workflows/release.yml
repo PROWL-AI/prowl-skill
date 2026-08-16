@@ -62,6 +62,12 @@ jobs:
         # makes "green before the tag" true of the artifact actually being released.
         run: node scripts/negative-self-test.js
 
+      - name: The documented CLI must be published before this one is
+        # BLOCKED is survivable on a branch and fatal here: a tag ships the page to
+        # `npx`, and a page describing an unpublished binary hands people commands
+        # that answer "Unknown command". Board B-01, made unforgettable.
+        run: node scripts/check-cli.js --release
+
       - name: Anthropic's own gate, on both plugins and the marketplace
         run: |
           set -eu
