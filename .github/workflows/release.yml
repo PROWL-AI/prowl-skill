@@ -29,7 +29,15 @@ on:
         type: string
 
 jobs:
+  # The whole validate suite, on the tag, before anything is published. It runs as a
+  # dependency rather than as copied steps: a separate workflow going red cannot stop
+  # this one, and "everything was green before the tag" has to be true of the artifact
+  # being released, not of some other run.
+  validate:
+    uses: ./.github/workflows/validate.yml
+
   release:
+    needs: validate
     if: vars.RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
@@ -154,3 +162,23 @@ jobs:
             exit 0
           fi
           npm publish --provenance --access public
+
+      - name: The registry must actually serve it
+        if: vars.PUBLISH_NPMJS == 'true'
+        run: |
+          set -eu
+          # The read replica lags the write master by a minute or two, so a fresh
+          # publish can still 404 on read. "Published" is a claim until it is served;
+          # poll rather than trusting publish's exit code alone.
+          VER=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          for _ in $(seq 1 18); do
+            got=$(npm view "$NAME" version 2>/dev/null || echo "")
+            if [ "$got" = "$VER" ]; then
+              echo "OK: the registry serves $NAME@$got"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "the registry still does not serve $VER after three minutes"
+          exit 1

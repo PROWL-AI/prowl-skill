@@ -1,6 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prowl",
-  "version": "0.4.2",
+  "displayName": "Prowl",
+  "version": "0.4.3",
   "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (448 tools), with a status widget that makes a running call, its progress and its cost visible in the terminal.",
   "author": {
     "name": "Prowl",
@@ -23,7 +25,7 @@
   "interface": {
     "displayName": "Prowl",
     "shortDescription": "One MCP, 448 market-intelligence tools",
-    "longDescription": "Connect the hosted Prowl MCP server to give any agent 448 market-intelligence tools \u2014 SEO, ads, SERP, scraping, AI \u2014 plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Ships a status widget: an in-flight call and how long it has run, session spend from the server's own billing figures, async-session progress in the dock, and a one-time notice when a call fails or the wallet blocks one.",
+    "longDescription": "Connect the hosted Prowl MCP server to give any agent 448 market-intelligence tools — SEO, ads, SERP, scraping, AI — plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Ships a status widget: an in-flight call and how long it has run, session spend from the server's own billing figures, async-session progress in the dock, and a one-time notice when a call fails or the wallet blocks one.",
     "developerName": "Prowl",
     "category": "Research",
     "capabilities": [

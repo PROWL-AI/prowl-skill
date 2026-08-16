@@ -80,6 +80,7 @@ a mechanical check or lost the paths it names.)*
 | 2026-08-16 | The CLI page against the CLI source; package 0.5.2 | PR #7 | no — seven defects found in an existing artifact, none introduced by the run |
 | 2026-08-16 | `check-contract.js`, and the tool that shipped while it was being written; package 0.5.3 | PR #8 | yes — see below |
 | 2026-08-16 | `check-cli.js`, and the CLI that shipped while it was being written; package 0.5.4 | PR #9 | yes — a test of mine was vacuous, see below |
+| 2026-08-16 | Auto-tag, validate gating the release, and the `/skill-audit` gaps; package 0.5.5 | PR #10 | no — an audit found gaps in an artifact, which is the audit working |
 
 ---
 

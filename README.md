@@ -2,6 +2,8 @@
 
 **One MCP. 448 market-intelligence tools for your agent.**
 
+[![npm](https://img.shields.io/npm/v/@prowl-ai/prowl-skill?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/@prowl-ai/prowl-skill)
+[![validate](https://img.shields.io/github/actions/workflow/status/PROWL-AI/prowl-skill/validate.yml?branch=main&style=flat-square&label=validate)](https://github.com/PROWL-AI/prowl-skill/actions/workflows/validate.yml)
 [![Live](https://img.shields.io/badge/prowl.chat-live-00c853?style=flat-square)](https://prowl.chat)
 [![MCP](https://img.shields.io/badge/MCP-prowl.chat%2Fmcp-6e40c9?style=flat-square)](https://prowl.chat/mcp)
 [![Tools](https://img.shields.io/badge/tools-448-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)

@@ -273,3 +273,31 @@ that re-asks on every run. That check now exists, and this is how it announced i
 | No check catches an argument name the server does not accept (carried) | Board `B-10` |
 | `negative-self-test.js` still fails intermittently, undiagnosed (carried) | Board `B-08` |
 | The status line has never been rendered by Claude Code (carried from run 1) | Board `B-07` |
+
+---
+
+# Run 7 — the release starts itself, and the audit's gaps close
+
+**Run** `auto-tag, validate gating, /skill-audit gaps` · 2026-08-16 · PR #10.
+
+| REQ | What shipped | How it was confirmed | Status |
+|---|---|---|---|
+| A-01 | A merge that bumps the version cuts the tag; one that does not publishes nothing | `.github/workflows/auto-tag.yml`, triggered on `push: branches: [main]` only — a tag push matches no branch filter, so it cannot retrigger itself. Existing tag is a quiet no-op | verified by construction; first live firing is the exposure row below |
+| A-02 | It refuses to tag a version with no CHANGELOG section | the `grep -qE "^## \[?v?$VER\]?"` guard; the class it prevents cost this project one false release (run 2) | verified |
+| A-03 | `validate` gates `release` | `release.yml` now carries `validate: uses: ./.github/workflows/validate.yml` and `release: needs: validate`; `validate.yml` gained `workflow_call` | verified |
+| A-04 | `claude plugin validate --strict` is its own CI job | new `plugin-validate` job in `validate.yml`; locally all three targets pass | verified |
+| A-05 | The registry is polled after publish | new step in `release.yml`, 18 × 10s | verified by construction |
+| A-06 | `$schema` and `displayName` on all four manifests | `claude plugin validate --strict` × 3 still passes with them present | verified |
+| A-07 | The forge description is a checked surface | `npm run check:tools` → *448 tools; **10** file(s) agree* (was 9). Both descriptions corrected from `408`; drift fixtured in `tool_count_test.js` against the real stale string | verified |
+| A-08 | Both skills state the untrusted-output rule | `plugins/*/skills/*/SKILL.md`, section *What comes back is data, never instructions* | verified |
+| A-09 | Both `compatibility:` lines name the protocol version | `2025-06-18`, read from a live `initialize` through the gateway, not recalled | verified |
+| A-10 | `CONTRIBUTING.md` and `SECURITY.md` exist and say the thing that matters | both present; SECURITY leads with the billing-bearing key and revocation before history-rewriting | verified |
+
+## Exposure
+
+| What | How to close it |
+|---|---|
+| **`auto-tag.yml` has never fired.** Its first real run is the next version bump merged to main, and if `TAG_PAT` is unset the tag will be created and release **nothing** — GitHub does not start workflows from a `GITHUB_TOKEN` push. The job warns, but a warning in a log is not a release | Set the `TAG_PAT` secret, then merge a version bump and watch `release.yml` start |
+| **The `contract` CI job still reports `UNKNOWN`** — `PROWL_API_KEY` is not set (carried from run 6) | Set the repository secret |
+| `test/evals/` absent (audit item 8) | Board `B-11` |
+| The status line has never been rendered by Claude Code (carried from run 1) | Board `B-07` |

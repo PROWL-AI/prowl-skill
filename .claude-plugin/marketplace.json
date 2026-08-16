@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "prowl",
   "owner": {
     "name": "Prowl",
@@ -10,6 +11,7 @@
   "plugins": [
     {
       "name": "prowl",
+      "displayName": "Prowl",
       "source": "./plugins/prowl",
       "description": "Adds the namespaced Prowl install/usage skill, the hosted Prowl MCP server, and the status widget: in-flight calls, async-session progress in the dock, session spend from the server's own billing figures, and a one-time notice when a call fails.",
       "author": {
@@ -19,6 +21,7 @@
     },
     {
       "name": "prowl-cli",
+      "displayName": "Prowl CLI",
       "source": "./plugins/prowl-cli",
       "description": "Adds the Prowl CLI skill: drive the same 448-tool catalog from the shell with @prowl-ai/cli — no MCP server required.",
       "author": {

@@ -127,6 +127,29 @@ function verdict(server, rows, allowed) {
  */
 const ALLOWED = [23];
 
+/**
+ * `owner/repo` out of package.json's `repository` field, in the shapes npm allows.
+ *
+ * The forge description is prose this repository publishes and never reads. It said
+ * `408` for two months after every file here said `448` — the exact drift this file
+ * exists to catch, on the one surface the file walk cannot see. Cheap to reach, so
+ * reached.
+ */
+function forgeSlug(pkg) {
+  const r = typeof pkg.repository === 'string' ? pkg.repository : (pkg.repository || {}).url || '';
+  const m = /(?:github:|github\.com[/:])([\w.-]+\/[\w.-]+?)(?:\.git)?$/.exec(r);
+  return m ? m[1] : null;
+}
+
+/** The forge's own one-line description, or null when it cannot be reached. */
+async function forgeDescription(slug) {
+  const res = await fetch(`https://api.github.com/repos/${slug}`, {
+    headers: { accept: 'application/vnd.github+json', 'user-agent': 'prowl-skill-check' },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return (await res.json()).description || '';
+}
+
 async function main() {
   let text;
   try {
@@ -149,6 +172,22 @@ async function main() {
   }
 
   const rows = repoCounts(ROOT);
+
+  // The forge description is a published surface with no file on disk. Unreachable is
+  // a note, not drift — an unauthenticated API has a rate limit, and being rate
+  // limited says nothing about what the description says.
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const slug = forgeSlug(pkg);
+  if (slug) {
+    try {
+      const desc = await forgeDescription(slug);
+      const counts = statedCounts(desc);
+      if (counts.length) rows.push({ file: `github:${slug} (repo description)`, counts });
+    } catch (e) {
+      process.stdout.write(`note: could not read the forge description for ${slug} — ${e.message}\n`);
+    }
+  }
+
   const v = verdict(count, rows, ALLOWED);
   if (v.ok) {
     process.stdout.write(`OK: ${SOURCE} serves ${count} tools; ${rows.length} file(s) agree.\n`);
@@ -159,6 +198,6 @@ async function main() {
   process.exit(1);
 }
 
-module.exports = { serverCount, statedCounts, repoCounts, verdict, ALLOWED, SOURCE };
+module.exports = { serverCount, statedCounts, repoCounts, verdict, forgeSlug, ALLOWED, SOURCE };
 
 if (require.main === module) main();
