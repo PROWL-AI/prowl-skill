@@ -97,6 +97,8 @@ Then ensure `[plugins."prowl@prowl"] enabled = true` in `${CODEX_HOME:-$HOME/.co
 
 The bundled `.mcp.json` connects to `https://prowl.chat/mcp` via `mcp-remote`, reading the token from `PROWL_MCP_TOKEN` or `~/.prowl/prowl_mcp_token`.
 
+With no key in either place the server **refuses to start** — it prints the two ways to supply one and exits `78` (`EX_CONFIG`). It deliberately does not fall through to `mcp-remote`'s OAuth: that opens a browser and waits on a `localhost` callback, and an MCP server started by an agent is killed long before the consent screen comes back, leaving the operator holding a redirect into a dead port.
+
 ### Manual MCP config (any client)
 
 Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `Authorization: Bearer prowl_YOUR_KEY`. See <https://prowl.chat/mcp/install.md> for per-client snippets (Cursor, Claude Code, Codex, generic).
@@ -137,7 +139,7 @@ pruned after seven days, and the plugin never writes to your Claude Code setting
 
 ## What your agent gets
 
-- **22 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.
+- **23 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.
 - **3 execution modes** for `prowl_analyze` — `basic` (20–100 calls, 30–90s), `deep` (40–300, 3–5 min, needs Exploit+) and `max` (60–400, 5–10 min, needs Blackops+). A key without the subscription is downgraded to `basic` rather than refused.
 - **8 playbooks** — `geo-visibility-audit`, `competitor-teardown`, `content-engine`, `local-and-reputation`, `mobile-aso`, `amazon-marketplace`, `idea-validation`, `channel-economics-audit`.
 - **Verified reports** — a typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.

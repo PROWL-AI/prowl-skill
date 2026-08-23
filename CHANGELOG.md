@@ -1,5 +1,58 @@
 # Changelog
 
+## v0.5.7 — 2026-08-23
+
+Package `@prowl-ai/prowl-skill` 0.5.7 · plugins `prowl` 0.4.4, `prowl-cli` 0.2.6
+(unchanged).
+
+A first run with no key opened a browser and left the operator holding a callback into
+a port that had already died. It now refuses to start, and says what to do instead.
+
+### Fixed
+
+- **The MCP launcher no longer strands the operator in a half-finished OAuth flow.**
+  With no API key configured, `plugins/prowl/.mcp.json` used to hand `mcp-remote` an
+  empty `Authorization: Bearer ` header. The server rejects that, and `mcp-remote`
+  falls back to OAuth — which opens a browser and starts a `localhost` listener to
+  catch the callback. An MCP server spawned at agent startup does not survive long
+  enough to be there when consent completes: the listener is gone, the redirect hits a
+  dead port, and the operator is left holding a URL with an authorization code that
+  expires before anything can be done with it.
+
+  Measured on one machine on 2026-08-22: two such flows in a single day, both
+  stranded. The second left `~/.mcp-auth/mcp-remote-0.1.43/…_lock.json` recording
+  `{"pid": 68661, "port": 4333}` for a process that no longer existed.
+
+  The launcher now resolves the key, and **refuses to start without one** — printing
+  the two supported ways to supply it and exiting `78` (`EX_CONFIG`, `sysexits.h`)
+  rather than reaching `mcp-remote` at all. A key that is present but empty or
+  whitespace-only counts as absent.
+
+- **The README said 22 MCP tools; the server registers 23.** `npm run check:contract`
+  reads the count off `https://prowl.chat/mcp/` and had no claim in the README to check
+  it against — the number sat one line below a heading no gate reads. The skill page
+  already said 23.
+
+### Added
+
+- **`test/mcp_launch_test.js`** — 12 checks that execute the real `.mcp.json` launcher
+  rather than reading it. A fake `npx` on the launcher's own PATH captures the argv, so
+  the suite can assert both halves: that no key means `npx` is never reached, and that
+  each documented key source (`PROWL_MCP_TOKEN`, the plugin file, the Codex file)
+  reaches `mcp-remote` carrying that exact key, in that precedence.
+
+  Shadowing `npx` by PATH alone does not work here — `sh -lc` is a login shell, and on
+  macOS `/etc/profile` runs `path_helper`, which pushes an injected PATH entry to the
+  end. A `.profile` in the fake `HOME` is sourced afterwards and does win; that is what
+  the suite uses. Nothing in it touches the network.
+
+  Verified to have teeth: against the previous launcher, 6 of the 12 checks fail, and
+  the failure output is the defect itself — `'Authorization: Bearer '`. That proof is
+  now the fourteenth plant in `scripts/negative-self-test.js`, so every CI run removes
+  the refusal from `.mcp.json` and requires the suite to go red on `npx ran without a
+  key` — a suite that quietly stopped checking this would otherwise report the same
+  green as one that still does.
+
 ## v0.5.6 — 2026-08-16
 
 Package `@prowl-ai/prowl-skill` 0.5.6 · plugins `prowl` 0.4.3 (unchanged), `prowl-cli`
