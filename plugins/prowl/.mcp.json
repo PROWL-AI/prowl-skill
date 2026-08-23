@@ -4,7 +4,7 @@
       "command": "sh",
       "args": [
         "-lc",
-        "TOKEN=\"${PROWL_MCP_TOKEN:-}\"; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.prowl/prowl_mcp_token\" ]; then TOKEN=\"$(cat \"$HOME/.prowl/prowl_mcp_token\")\"; fi; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.codex/prowl_mcp_token\" ]; then TOKEN=\"$(cat \"$HOME/.codex/prowl_mcp_token\")\"; fi; exec npx -y mcp-remote https://prowl.chat/mcp --header \"Authorization: Bearer $TOKEN\" --transport http-first --silent"
+        "TOKEN=\"$(printf %s \"${PROWL_MCP_TOKEN:-}\" | tr -d \"[:space:]\")\"; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.prowl/prowl_mcp_token\" ]; then TOKEN=\"$(tr -d \"[:space:]\" < \"$HOME/.prowl/prowl_mcp_token\")\"; fi; if [ -z \"$TOKEN\" ] && [ -f \"$HOME/.codex/prowl_mcp_token\" ]; then TOKEN=\"$(tr -d \"[:space:]\" < \"$HOME/.codex/prowl_mcp_token\")\"; fi; if [ -z \"$TOKEN\" ]; then echo 'prowl: no API key; the MCP server will not start.' >&2; echo 'prowl: store one with:  npx @prowl-ai/prowl-skill token' >&2; echo 'prowl: or set PROWL_MCP_TOKEN in the environment.' >&2; echo 'prowl: not falling back to OAuth - browser consent cannot finish inside MCP startup.' >&2; exit 78; fi; exec npx -y mcp-remote https://prowl.chat/mcp --header \"Authorization: Bearer $TOKEN\" --transport http-first --silent"
       ]
     }
   }

@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; speaks MCP protocol 2025-06-18 over Streamable HTTP; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
   author: prowl.chat
-  version: "0.4.3"
+  version: "0.4.4"
 ---
 
 # Prowl — market intelligence for your agent
@@ -27,6 +27,8 @@ Prowl API keys (`prowl_...`) are billing-bearing — every metered call debits a
    - environment variable `PROWL_MCP_TOKEN`, or
    - a token file at `~/.prowl/prowl_mcp_token` (`mkdir -p ~/.prowl && printf '%s' "prowl_YOUR_KEY" > ~/.prowl/prowl_mcp_token && chmod 600 ~/.prowl/prowl_mcp_token`).
 3. The bundled `.mcp.json` reads the token automatically and connects via `mcp-remote`.
+
+Without a key the server does not start: it names both ways to supply one and exits `78`. That is deliberate — it will not fall through to OAuth, because browser consent cannot finish inside an MCP startup. If the agent reports the `prowl` server as failed, read its stderr: the remedy is in it.
 
 For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp add`, Codex `config.toml`, generic MCP), see the hosted playbook: [https://prowl.chat/mcp/install.md](https://prowl.chat/mcp/install.md).
 

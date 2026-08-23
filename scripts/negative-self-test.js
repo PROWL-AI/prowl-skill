@@ -119,6 +119,16 @@ const PLANTS = [
     expect: 'refuse to tag ahead of the binary',
   },
   {
+    // The defect this launcher was rewritten for. Removing the refusal puts the empty
+    // `Authorization: Bearer` back on the wire, `mcp-remote` falls into OAuth, and the
+    // operator gets a browser window whose callback lands on a port that has already
+    // died. Nothing about that is visible in a manifest diff, so it is planted here.
+    name: 'the launcher starts an OAuth flow instead of refusing',
+    file: 'plugins/prowl/.mcp.json',
+    apply: (t) => t.replace('exit 78; fi;', 'fi;'),
+    expect: 'npx ran without a key',
+  },
+  {
     // The version lives in seven places, and a release that tags one of them while
     // shipping another is the failure this check exists to make impossible.
     name: 'a plugin stops agreeing with itself about its version',
