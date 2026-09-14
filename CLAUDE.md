@@ -31,14 +31,19 @@ could not reach the server has learned nothing, and reporting that as drift is h
 check gets ignored.
 
 `check:contract` needs a key, because `tools/list` answers `-32001` without one. It
-takes `PROWL_API_KEY`, or `PROWL_MCP_HEADER="Name: value"` when an MCP gateway in
-front holds the key itself:
+takes `PROWL_API_KEY` (or `PROWL_MCP_HEADER="Name: value"` when something in front
+holds the key). **The key travels by NAME, never through `cat` on the command line:**
+a value in argv is visible to `ps`, lands in shell history, and the shape below is
+exactly how two of this machine's leaks happened. The observatory's vault holds it as
+`prowl/prod/PROWL_API_KEY` (put 2026-09-14) and hands it to one command:
 
 ```bash
-PROWL_MCP_URL=http://127.0.0.1:4000/mcp/prowl \
-PROWL_MCP_HEADER="x-agw-key: $(cat ~/.config/agentgateway/secrets/roles/full)" \
-  npm run check:contract
+~/DATA/project-observatory/tools/use_secret.py run prowl PROWL_API_KEY -- npm run check:contract
 ```
+
+The previous example here went through the local MCP gateway with a role key read by
+`cat` — the gateway was switched off on 2026-09-14 and the role keys with it, so that
+command would fail even before it leaked (project-observatory DEC-0244, T-22).
 
 `check:cli` needs no secret — npm is public. It has a third outcome besides pass and
 fail: **`BLOCKED`**, when the page documents a CLI version npm does not serve. That is a
