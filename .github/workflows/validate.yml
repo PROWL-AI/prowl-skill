@@ -5,6 +5,14 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # The catalogue count drifts because the SERVER moves, not because this repository
+  # does — so a check that only runs on push cannot see it. Measured 2026-09-18: the
+  # last run here was 2026-09-14, and by then prowl.chat had gone 448 -> 444 while ten
+  # surfaces in this repository, the marketplace manifest and the GitHub repository
+  # description among them, still said 448. A weekly tick is what turns "somebody has
+  # to remember" into "the repository notices".
+  schedule:
+    - cron: "17 6 * * 1"
   # Callable, so `release.yml` can depend on it. Re-implementing these checks as
   # steps inside the release is what let a sibling project tag v0.4.1 while its own
   # validate run for that tag was red — npm served it four minutes later. A release

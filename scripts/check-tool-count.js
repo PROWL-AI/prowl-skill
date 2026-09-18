@@ -27,6 +27,21 @@ const SOURCE = 'https://prowl.chat/mcp/skill.md';
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'docs', '.task-pipeline']);
 
 /**
+ * Files whose counts are HISTORY, not a claim about today.
+ *
+ * `CHANGELOG.md` records what each release said, and one of the things a release said
+ * is the tool count it shipped with. Every past figure therefore stays in it forever,
+ * and a check that reads them as current claims has two possible outcomes: the past
+ * gets rewritten on every catalogue change, or the check is red forever and stops
+ * being read. Both are worse than the drift it was written to catch.
+ *
+ * Deliberately a file list and not a heuristic on tense: a rule that tries to tell a
+ * historical sentence from a current one by its words will be wrong in both directions,
+ * and quietly.
+ */
+const HISTORICAL_FILES = new Set(['CHANGELOG.md']);
+
+/**
  * The server's own figure, from the hosted skill document.
  *
  * Anchored on the heading's shape — `→ <n> API tools` — and on the opening
@@ -81,8 +96,10 @@ function repoCounts(root) {
       }
       if (!/\.(md|json)$/.test(e.name)) continue;
       const file = path.join(dir, e.name);
+      const rel = path.relative(root, file);
+      if (HISTORICAL_FILES.has(rel)) continue;
       const counts = statedCounts(fs.readFileSync(file, 'utf8'));
-      if (counts.length) out.push({ file: path.relative(root, file), counts });
+      if (counts.length) out.push({ file: rel, counts });
     }
   };
   walk(root);

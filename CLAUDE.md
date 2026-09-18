@@ -10,9 +10,13 @@ config, and — since v0.3.0 — the **status widget**, the only code here.
 The skills are a shopfront for a document this repository does not own:
 `https://prowl.chat/mcp/skill.md` is the source of truth for the tool catalogue, the
 schemas and the tiers. Anything restated here is a copy, and copies drift — which is
-exactly what happened: the count sat at 408 in eight files while the server served
-448. That is why `scripts/check-tool-count.js` exists, and why a number is either
-computed or fetched here, never remembered.
+exactly what happened: the count sat at 408 in eight files while the server served a
+larger number, and again in September 2026 when eight files said 448 and the server
+served 444 (`CHANGELOG.md` carries both figures). That is why
+`scripts/check-tool-count.js` exists, and why a number is either computed or fetched
+here, never remembered — this paragraph deliberately does not restate the outgoing
+figure, because a document that keeps yesterday's number in prose is the drift it is
+warning about.
 
 ## The gate
 

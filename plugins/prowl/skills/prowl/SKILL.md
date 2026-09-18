@@ -1,6 +1,6 @@
 ---
 name: prowl
-description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 448 market-intelligence tools (SEO, backlinks, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword/backlink data, analyzing ad creative or spend, comparing pricing or funnels, validating a product idea, or any task that needs real market data instead of guesses.
+description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 444 market-intelligence tools (SEO, backlinks, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword/backlink data, analyzing ad creative or spend, comparing pricing or funnels, validating a product idea, or any task that needs real market data instead of guesses.
 license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; speaks MCP protocol 2025-06-18 over Streamable HTTP; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
@@ -10,7 +10,7 @@ metadata:
 
 # Prowl — market intelligence for your agent
 
-Prowl is a single MCP endpoint that exposes **448 market-intelligence API tools** across 15 providers (DataForSEO, SearchAPI, SerpApi, SpyFu, Majestic, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …) plus the full Prowl pipeline — `prowl_analyze`, async research sessions, recurring schedules, artifacts and exports. Call real data instead of guessing.
+Prowl is a single MCP endpoint that exposes **444 market-intelligence API tools** across 15 providers (DataForSEO, SearchAPI, SerpApi, SpyFu, Majestic, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …) plus the full Prowl pipeline — `prowl_analyze`, async research sessions, recurring schedules, artifacts and exports. Call real data instead of guessing.
 
 Prefer the sibling `prowl-cli` skill when the work belongs in a shell script or a CI job; use this one when the agent should call Prowl as MCP tools inside its own tool loop.
 
@@ -104,7 +104,7 @@ Call `prowl_list_playbooks` (free) for what each one covers.
 ## Verify
 
 1. List MCP tools; confirm `prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`.
-2. Run `prowl_list_tools` (free) → category counts summing to `total_tools: 448`. (It returns counts, not names — pass `names=true` for the full list.)
+2. Run `prowl_list_tools` (free) → category counts summing to `total_tools: 444`. (It returns counts, not names — pass `names=true` for the full list.)
 3. Run `prowl_get_wallet` (free) → the key is valid, and the balance and available modes come back.
 4. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`. It answers
    `status`, `server`, `version`, `transport` and `endpoint` — and nothing else, so
