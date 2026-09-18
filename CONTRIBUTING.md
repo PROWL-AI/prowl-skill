@@ -7,8 +7,10 @@ short version first.
 
 **Every number and every name here is fetched or computed, never remembered.**
 
-The tool count sat at `408` in eight files for two releases while the server served
-`448`. A tool named `prowl_get_wallet` shipped to npm in three places while the
+The tool count sat at `408` in eight files for two releases while the server served a
+larger number, and in September 2026 eight files said `448` against a server serving
+`444` — the figures are in `CHANGELOG.md`, not restated here, because prose that keeps
+an outgoing number is the drift this rule exists to stop. A tool named `prowl_get_wallet` shipped to npm in three places while the
 deployment did not register it — and the check that guards the count had been edited
 to agree with it. Both were confident, both were wrong, and both were caught by asking
 the server rather than by reading the repository.
