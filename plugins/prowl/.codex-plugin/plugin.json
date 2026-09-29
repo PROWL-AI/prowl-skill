@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prowl",
   "displayName": "Prowl",
-  "version": "0.4.4",
-  "description": "Prowl market-intelligence skill backed by the hosted Prowl MCP server (448 tools), with a status widget that makes a running call, its progress and its cost visible in the terminal.",
+  "version": "0.5.0",
+  "description": "Real-world market data for your agents: the Prowl skill backed by the hosted Prowl MCP server (444 market data tools across 17 providers), with a status widget that makes a running call, its progress and its cost visible in the terminal.",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",
@@ -14,18 +14,19 @@
   "license": "MIT",
   "keywords": [
     "prowl",
-    "market-intelligence",
-    "competitive-analysis",
+    "market-data",
+    "market-research",
     "seo",
     "ads",
+    "trends",
     "mcp"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Prowl",
-    "shortDescription": "One MCP, 448 market-intelligence tools",
-    "longDescription": "Connect the hosted Prowl MCP server to give any agent 448 market-intelligence tools — SEO, ads, SERP, scraping, AI — plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Ships a status widget: an in-flight call and how long it has run, session spend from the server's own billing figures, async-session progress in the dock, and a one-time notice when a call fails or the wallet blocks one.",
+    "shortDescription": "Real-world market data for your agents",
+    "longDescription": "Connect the hosted Prowl MCP server to give any agent 444 market data tools across 17 providers – search, ads, SEO, app stores, reviews, social, trends and finance. Each call is billed on its own from one USD wallet, every number comes back with the tool that returned it, and prowl_analyze composes a cross-checked report when one call is not enough. Ships a status widget: an in-flight call and how long it has run, session spend from the server's own billing figures, async-session progress in the dock, and a one-time notice when a call fails or the wallet blocks one.",
     "developerName": "Prowl",
     "category": "Research",
     "capabilities": [
@@ -37,10 +38,10 @@
     "termsOfServiceURL": "https://prowl.chat/terms/",
     "defaultPrompt": [
       "List the Prowl tools available",
-      "Run a competitive analysis on a domain",
+      "Pull Google Trends and news for a keyword",
       "Pull SERP and keyword data for a topic"
     ],
-    "brandColor": "#00ff41",
+    "brandColor": "#3f7d5f",
     "screenshots": []
   }
 }

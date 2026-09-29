@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prowl-cli",
   "displayName": "Prowl CLI",
-  "description": "Prowl CLI skill: drive the 448-tool Prowl market-intelligence catalog from the shell with @prowl-ai/cli — no MCP server required.",
-  "version": "0.2.6",
+  "description": "Prowl CLI skill: real-world market data from the shell – drive the 444-tool Prowl market data catalog with @prowl-ai/cli, no MCP server required.",
+  "version": "0.3.0",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",

@@ -27,18 +27,37 @@ const SOURCE = 'https://prowl.chat/mcp/skill.md';
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'docs', '.task-pipeline']);
 
 /**
+ * Files whose counts are HISTORY, not a claim about today.
+ *
+ * `CHANGELOG.md` records what each release said, and one of the things a release said
+ * is the tool count it shipped with. Every past figure therefore stays in it forever,
+ * and a check that reads them as current claims has two possible outcomes: the past
+ * gets rewritten on every catalogue change, or the check is red forever and stops
+ * being read. Both are worse than the drift it was written to catch.
+ *
+ * Deliberately a file list and not a heuristic on tense: a rule that tries to tell a
+ * historical sentence from a current one by its words will be wrong in both directions,
+ * and quietly.
+ */
+const HISTORICAL_FILES = new Set(['CHANGELOG.md']);
+
+/**
  * The server's own figure, from the hosted skill document.
  *
  * Anchored on the heading's shape — `→ <n> API tools` — and on the opening
- * paragraph's `<n> marketing intelligence API tools`. Two independent anchors,
- * because a document that reworded one of them should make this check say so
- * rather than silently stop finding anything.
+ * paragraph's count. Two independent anchors, because a document that reworded one
+ * of them should make this check say so rather than silently stop finding anything.
+ *
+ * The opening paragraph said `<n> marketing intelligence API tools` until the
+ * 2026-09 repositioning and says `<n> market data tools` after it. The anchor takes
+ * both: the positioning moved, the fact did not, and an anchor that knew only one
+ * wording would have gone quiet the day the other shipped.
  */
 function serverCount(text) {
   const found = new Set();
   const patterns = [
     /→\s*(\d{2,5})\s+API\s+tools/gi,
-    /\b(\d{2,5})\s+marketing[\s-]intelligence\s+API\s+tools/gi,
+    /\b(\d{2,5})\s+(?:marketing[\s-]intelligence|market[\s-]data)\s+(?:API\s+)?tools/gi,
   ];
   for (const re of patterns) {
     let m;
@@ -51,15 +70,16 @@ function serverCount(text) {
 /**
  * Every count this repository states, per file.
  *
- * Three shapes appear in the prose and each is matched on its own terms: `448
- * tools`, `448-tool catalog`, and the README badge's `tools-448-<colour>`. A bare
+ * Three shapes appear in the prose and each is matched on its own terms: `444
+ * tools` (bare, or as `market data` / `market-intelligence` tools), `444-tool
+ * catalog`, and the README badge's `tools-444-<colour>`. A bare
  * three-digit number is never taken — `15 providers` and `#0969da` are not counts,
  * and a pattern loose enough to catch them would report noise until nobody read it.
  */
 function statedCounts(text) {
   const found = new Set();
   const patterns = [
-    /\b(\d{2,5})\s+(?:market-intelligence\s+)?(?:API\s+)?tools?\b/gi,
+    /\b(\d{2,5})\s+(?:(?:market[\s-]intelligence|market[\s-]data)\s+)?(?:API\s+)?tools?\b/gi,
     /\b(\d{2,5})-tool\b/gi,
     /tools-(\d{2,5})-/g,
   ];
@@ -81,8 +101,10 @@ function repoCounts(root) {
       }
       if (!/\.(md|json)$/.test(e.name)) continue;
       const file = path.join(dir, e.name);
+      const rel = path.relative(root, file);
+      if (HISTORICAL_FILES.has(rel)) continue;
       const counts = statedCounts(fs.readFileSync(file, 'utf8'));
-      if (counts.length) out.push({ file: path.relative(root, file), counts });
+      if (counts.length) out.push({ file: rel, counts });
     }
   };
   walk(root);
@@ -198,6 +220,6 @@ async function main() {
   process.exit(1);
 }
 
-module.exports = { serverCount, statedCounts, repoCounts, verdict, forgeSlug, ALLOWED, SOURCE };
+module.exports = { serverCount, statedCounts, repoCounts, verdict, forgeSlug, ALLOWED, SOURCE, HISTORICAL_FILES };
 
 if (require.main === module) main();

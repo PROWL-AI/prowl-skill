@@ -1,16 +1,18 @@
 ---
 name: prowl
-description: Connects this agent to the Prowl MCP — a single MCP endpoint exposing 448 market-intelligence tools (SEO, backlinks, ads, SERP, web scraping, AI) plus the full Prowl analysis pipeline, billed pay-as-you-go from a USD wallet. Use when researching competitors, pulling SEO/SERP/keyword/backlink data, analyzing ad creative or spend, comparing pricing or funnels, validating a product idea, or any task that needs real market data instead of guesses.
+description: Connects this agent to real-world market data through the Prowl MCP – one endpoint with 444 market data tools across 17 providers (search, ads, SEO, app stores, reviews, social, trends, finance), each call billed on its own from a USD wallet, plus prowl_analyze for a cross-checked report when one call is not enough. Use when a task needs real market data instead of guesses – SERP, keyword, backlink or AI-search data, ad creative or spend, app store listings and reviews, social or trend signals, stock quotes and market news, competitor pricing or funnels, or validating a product idea.
 license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; speaks MCP protocol 2025-06-18 over Streamable HTTP; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
   author: prowl.chat
-  version: "0.4.4"
+  version: "0.5.0"
 ---
 
-# Prowl — market intelligence for your agent
+# Prowl – real-world market data for your agents
 
-Prowl is a single MCP endpoint that exposes **448 market-intelligence API tools** across 15 providers (DataForSEO, SearchAPI, SerpApi, SpyFu, Majestic, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …) plus the full Prowl pipeline — `prowl_analyze`, async research sessions, recurring schedules, artifacts and exports. Call real data instead of guessing.
+Prowl is a single MCP endpoint that exposes **444 market data tools** across 17 providers (DataForSEO, SearchAPI, SerpApi, Moz, SpyFu, Majestic, Keywords Everywhere, Foreplay, Firecrawl, Exa, Perplexity, Gemini, …): search, ads, SEO, app stores, reviews, social, trends and finance. The agent calls what it needs, each call is billed on its own from one USD wallet, and every number comes back with the tool that returned it.
+
+One call for one number; a report when one call is not enough. `prowl_analyze` plans many calls, cross-checks numeric claims against independent tools and composes a report (up to 16 intelligence modules, 8 without a subscription). Async sessions, recurring schedules, artifacts and exports build on it. People without an agent of their own use Prowl Agent on [prowl.chat](https://prowl.chat), which runs on the same tools.
 
 Prefer the sibling `prowl-cli` skill when the work belongs in a shell script or a CI job; use this one when the agent should call Prowl as MCP tools inside its own tool loop.
 
@@ -22,7 +24,7 @@ Prefer the sibling `prowl-cli` skill when the work belongs in a shell script or 
 
 Prowl API keys (`prowl_...`) are billing-bearing — every metered call debits a USD wallet. Treat the key as a secret; never commit it to a public repo.
 
-1. The human signs up at [https://prowl.chat](https://prowl.chat) (gets $5 starter credit), optionally tops up the wallet, and generates a `prowl_...` key (shown once) under **MCP Home → API keys & config**.
+1. The human signs up at [https://prowl.chat](https://prowl.chat) (gets $15 starter credit, no card), optionally tops up the wallet, and generates a `prowl_...` key (shown once) under **MCP Home → API keys & config**.
 2. Provide the key to this plugin via either:
    - environment variable `PROWL_MCP_TOKEN`, or
    - a token file at `~/.prowl/prowl_mcp_token` (`mkdir -p ~/.prowl && printf '%s' "prowl_YOUR_KEY" > ~/.prowl/prowl_mcp_token && chmod 600 ~/.prowl/prowl_mcp_token`).
@@ -42,7 +44,7 @@ For manual per-client setup (Cursor `.cursor/mcp.json`, Claude Code `claude mcp 
 | `prowl_search_tools` | Semantic search over the catalog | free |
 | `prowl_tool_info` | JSON input schema + estimated cost for one tool | free |
 | `prowl_call_tool` | Invoke any single tool | metered |
-| `prowl_analyze` | Full multi-agent research report in one shot | metered, sized by `execution_mode` |
+| `prowl_analyze` | A report when one call is not enough: plans the calls, cross-checks numeric claims, composes the modules | metered, sized by `execution_mode` |
 | `prowl_get_wallet` | Balance, and which `execution_mode`s this key can really run | free |
 | `prowl_list_playbooks` | The 8 fixed, persona-tuned report shapes | free |
 | `prowl_start_session` / `prowl_session_status` / `prowl_get_session` / `prowl_list_sessions` | Async deep research: kick off, poll, read back | metered |
@@ -57,7 +59,7 @@ costs about 4k tokens and is returned only for `names=true` or a single
 `category`. Reach for `prowl_search_tools` to find a tool by intent; it is the
 cheap path and ranks by relevance.
 
-Recommended flow: `prowl_search_tools` → `prowl_tool_info` → `prowl_call_tool` for one fact; `prowl_analyze` for a complete strategy report. Pass a stable `session_id` across calls to keep the report cache and conversation memory scoped to one conversation — `prowl_generate_artifact` and `prowl_export_report` read the report cached against that session, so they need a prior `prowl_analyze` on the same id.
+Recommended flow: `prowl_search_tools` → `prowl_tool_info` → `prowl_call_tool` for one number; `prowl_analyze` when the task needs a report rather than one call. Pass a stable `session_id` across calls to keep the report cache and conversation memory scoped to one conversation — `prowl_generate_artifact` and `prowl_export_report` read the report cached against that session, so they need a prior `prowl_analyze` on the same id.
 
 Full reference: [https://prowl.chat/mcp/skill.md](https://prowl.chat/mcp/skill.md)
 
@@ -83,7 +85,7 @@ had not.
 | `execution_mode` | Use for | Calls per run | Time | Requires |
 |------|---------|--------------:|------|----------|
 | `basic` | One question, fast turnaround | 20–100 | 30–90s | — |
-| `deep` | Full competitive report, evidence-verified | 40–300 | 3–5 min | Exploit+ subscription |
+| `deep` | Full report, evidence-verified | 40–300 | 3–5 min | Exploit+ subscription |
 | `max` | Exhaustive, claims adversarially checked | 60–400 | 5–10 min | Blackops+ subscription |
 
 **A key without the subscription is not refused — it is downgraded.** `deep` and
@@ -104,7 +106,7 @@ Call `prowl_list_playbooks` (free) for what each one covers.
 ## Verify
 
 1. List MCP tools; confirm `prowl_list_tools`, `prowl_tool_info`, `prowl_call_tool`, `prowl_analyze`.
-2. Run `prowl_list_tools` (free) → category counts summing to `total_tools: 448`. (It returns counts, not names — pass `names=true` for the full list.)
+2. Run `prowl_list_tools` (free) → category counts summing to `total_tools: 444`. (It returns counts, not names — pass `names=true` for the full list.)
 3. Run `prowl_get_wallet` (free) → the key is valid, and the balance and available modes come back.
 4. Connectivity check (no auth): `curl https://prowl.chat/mcp/health`. It answers
    `status`, `server`, `version`, `transport` and `endpoint` — and nothing else, so
@@ -187,7 +189,7 @@ is a place an attacker can write.
 
 ## When to use
 
-Competitive/market intelligence, SEO/SERP/keyword/backlink research, ad creative & spend research, pricing/funnel analysis, review mining, AI-search (GEO/AEO) visibility, product-idea validation — anything needing real numbers.
+Any task that needs real market data: market research and analytics, marketing and ads (creative and spend), SEO and AI search (SERP, keywords, backlinks, GEO/AEO visibility), social media, creative research, trends, investing context (stock quotes, market movers, ticker search, news and search interest – data, never advice), product development and idea validation, e-commerce, local businesses and reviews, competitor pricing and funnels.
 
 ## When not to use
 

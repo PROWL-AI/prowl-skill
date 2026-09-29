@@ -1,20 +1,20 @@
 ---
 name: prowl-cli
-description: Drives the Prowl CLI (`@prowl-ai/cli`) — a shell client for Prowl exposing 448 market-intelligence tools (SEO, backlinks, 60+ SERP engines, ads, web scraping, AI) plus the full Prowl research pipeline, billed pay-as-you-go from a USD wallet. Use when a shell is available and market data is needed in a script, a CI job or a one-off command — competitor research, SERP and keyword data, backlink profiles, ad creative research, pricing and demand validation — without configuring an MCP server.
+description: Drives the Prowl CLI (`@prowl-ai/cli`) – a shell client for real-world market data, exposing 444 market data tools across 17 providers (search with 102 SearchAPI engines, ads, SEO and backlinks, app stores, reviews, social, trends, finance) plus `prowl analyze` for a report when one call is not enough, each call billed from a USD wallet. Use when a shell is available and market data is needed in a script, a CI job or a one-off command – SERP and keyword data, backlink profiles, ad creative research, trends, stock quotes and news, competitor pricing and demand validation – without configuring an MCP server.
 license: MIT
 compatibility: Requires Node.js 18+, the `@prowl-ai/cli` npm package (installed globally or run via npx) and a Prowl API key; speaks MCP protocol 2025-06-18 to prowl.chat over the network.
 metadata:
   author: prowl.chat
-  version: "0.2.6"
+  version: "0.3.0"
   # The @prowl-ai/cli release this page describes. NOT the plugin version above:
   # they are different things that happened to both read 0.2.x, and nothing
   # compared them until scripts/check-cli.js did.
-  documents_cli: "0.2.1"
+  documents_cli: "0.3.0"
 ---
 
-# Prowl CLI — market intelligence from the shell
+# Prowl CLI – real-world market data from the shell
 
-`@prowl-ai/cli` is the command-line client for [Prowl](https://prowl.chat): one binary that reaches **448 market-intelligence tools** across 15 providers, plus the Prowl analysis pipeline. Every metered call debits a USD wallet.
+`@prowl-ai/cli` is the command-line client for [Prowl](https://prowl.chat): one binary that reaches **444 market data tools** across 17 providers – search, ads, SEO, app stores, reviews, social, trends and finance – plus `analyze`, which plans many calls and composes a cross-checked report when one call is not enough. Every metered call debits a USD wallet, and every number comes back with the tool that returned it.
 
 Use this skill when a shell is available. Use the sibling `prowl` plugin instead when the agent should call Prowl as MCP tools inside its own tool loop.
 
@@ -26,7 +26,7 @@ Prowl API keys (`prowl_...`) are **billing-bearing** — treat them as secrets a
 npm install -g @prowl-ai/cli
 ```
 
-**This page documents CLI `0.2.1`**, which is what npm serves as `latest`. On `0.1.1` or
+**This page documents CLI `0.3.0`**, which is what npm serves as `latest`. On `0.1.1` or
 older only `auth`, `tools`, `call`, `analyze`, `wallet` and `version` exist and
 everything else answers `Unknown command` — `prowl version` says which you have.
 
@@ -93,7 +93,7 @@ redirect the report instead: `prowl session get <id> > report.md`.
 Global flags: `--json` (one machine-readable JSON document on stdout — always use this when parsing), `--key <k>`, `--quiet`, `-h`.
 Environment: `PROWL_API_KEY`, `PROWL_BASE_URL`, `PROWL_MCP_URL`, `PROWL_TIMEOUT_MS`.
 
-Recommended flow: `tools search` → `tools info` (check the cost) → `call`. Reach for `analyze` when the goal is a full report rather than one data point. Pass a stable `--session <id>` across consecutive calls to keep the report cache, history and spend scoped to one investigation; `artifact` and `export` read the report cached against that session, so they need a prior `analyze` on the same id.
+Recommended flow: `tools search` → `tools info` (check the cost) → `call`. Reach for `analyze` when one call is not enough and the goal is a report rather than one number. Pass a stable `--session <id>` across consecutive calls to keep the report cache, history and spend scoped to one investigation; `artifact` and `export` read the report cached against that session, so they need a prior `analyze` on the same id.
 
 `tools list` returns category **counts**, not names — pass `--names` or `--category <c>` for names, or prefer `tools search`, which is cheaper and ranks by relevance.
 
@@ -104,14 +104,15 @@ Recommended flow: `tools search` → `tools info` (check the cost) → `call`. R
 | Tier | Use for | Calls per run | Time | Requires |
 |------|---------|--------------:|------|----------|
 | `basic` | one question, fast turnaround | 20–100 | 30–90s | — |
-| `deep` | full competitive report, evidence-verified | 40–300 | 3–5 min | Exploit+ subscription |
+| `deep` | full report, evidence-verified | 40–300 | 3–5 min | Exploit+ subscription |
 | `max` | exhaustive, claims adversarially checked | 60–400 | 5–10 min | Blackops+ subscription |
 
-`prowl --help` additionally states hard provider-cost caps of $2.50, $8.00 and $18.00 per
-mode. This page does not repeat them as fact: no tool schema, no server response and no
-public endpoint carries them, and `prowl.chat/pricing` — which the CLI source cites as
-their origin — is a `404`. Treat them as the CLI author's figures until a server
-response confirms them.
+`prowl --help` additionally states hard provider-cost caps of $5.00, $8.00 and $18.00 per
+mode, and wallet holds of $15, $24 and $54 – the figures
+[prowl.chat/docs/running-your-first-report](https://prowl.chat/docs/running-your-first-report/)
+publishes. No tool schema and no server response carries them, so they can move on the
+server before this page or the CLI does: read that page when the exact figure matters,
+and confirm with the human before a run whose hold the wallet may not cover.
 
 **A key without the subscription is not refused — it is downgraded to `basic`, and the run executes and bills as `basic`.** Nothing in the output announces this loudly.
 
@@ -185,7 +186,7 @@ into another program is a place a competitor's page can reach, so quote it, neve
 
 ## When to use
 
-Competitor and market research, SEO/SERP/keyword data, backlink profiles, ad creative and spend research, pricing and demand validation — from a script, a CI job, or a shell one-liner.
+Market data from a script, a CI job or a shell one-liner: market research, SEO/SERP/keyword data, backlink profiles, ad creative and spend research, trends, stock quotes and market news, app store and review data, competitor pricing and demand validation.
 
 ## When not to use
 

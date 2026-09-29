@@ -5,7 +5,7 @@
       "skills": ["prowl"],
       "query": "Get me the backlink profile for stripe.com",
       "expected_behavior": [
-        "Reaches for prowl_search_tools or prowl_tool_info before prowl_call_tool — discovery is free and the catalogue holds 448 entries",
+        "Reaches for prowl_search_tools or prowl_tool_info before prowl_call_tool — discovery is free and the catalogue holds 444 entries",
         "Does not invent a tool name; every name it calls came back from the server",
         "Names the estimated cost, from prowl_tool_info, before making the metered call"
       ],

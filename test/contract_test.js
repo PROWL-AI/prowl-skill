@@ -17,7 +17,8 @@ const PAGE = `
 | \`prowl_list_tools\` | Category counts | free |
 | \`prowl_get_wallet\` | Balance | free |
 
-Prowl exposes **448 market-intelligence API tools** across 15 providers.
+Prowl exposes **444 market data tools** across 17 providers.
+The page used to say **448 market-intelligence API tools** across 15 providers.
 
 Provide the key via a token file at \`~/.prowl/prowl_mcp_token\`.
 Artifacts come as infographic, pdf, pptx, audio or video.
@@ -47,8 +48,8 @@ it('does not mistake the token file for a tool', () => {
 });
 
 it('reads the MCP-tool count without swallowing the catalogue count', () => {
-  // `448 market-intelligence API tools` sits three lines away and is a different
-  // number about a different thing. A pattern loose enough to take both would report
+  // `444 market data tools` (and, on an older page, `448 market-intelligence API
+  // tools`) sits a few lines away and is a different number about a different thing. A pattern loose enough to take both would report
   // the catalogue as drift on every run.
   assert.deepStrictEqual(check.statedToolCounts(PAGE), [23]);
 });

@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prowl-cli",
   "displayName": "Prowl CLI",
-  "version": "0.2.6",
-  "description": "Prowl CLI skill: drive the 448-tool Prowl market-intelligence catalog from the shell with @prowl-ai/cli — no MCP server required.",
+  "version": "0.3.0",
+  "description": "Prowl CLI skill: real-world market data from the shell – drive the 444-tool Prowl market data catalog with @prowl-ai/cli, no MCP server required.",
   "author": {
     "name": "Prowl",
     "email": "support@prowl.chat",
@@ -15,8 +15,8 @@
   "keywords": [
     "prowl",
     "cli",
-    "market-intelligence",
-    "competitive-analysis",
+    "market-data",
+    "market-research",
     "seo",
     "serp",
     "ads"
@@ -24,7 +24,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Prowl CLI",
-    "shortDescription": "448 market-intelligence tools from the shell",
+    "shortDescription": "444 market data tools from the shell",
     "longDescription": "Teaches the agent the Prowl command-line client (@prowl-ai/cli): install and key handling, the free catalog commands, metered tool calls, analyze tiers with hard cost caps, playbooks, JSON output and exit codes. Useful wherever a shell is available and no MCP server is configured.",
     "developerName": "Prowl",
     "category": "Research",
@@ -37,10 +37,10 @@
     "termsOfServiceURL": "https://prowl.chat/terms/",
     "defaultPrompt": [
       "Search the Prowl tool catalog for backlink tools",
-      "Run prowl analyze on a competitor domain",
+      "Pull Google Trends for a keyword from the shell",
       "Check my Prowl wallet balance"
     ],
-    "brandColor": "#00ff41",
+    "brandColor": "#3f7d5f",
     "screenshots": []
   }
 }

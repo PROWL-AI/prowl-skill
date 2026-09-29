@@ -1,15 +1,17 @@
 # Prowl Plugin
 
-**One MCP. 448 market-intelligence tools for your agent.**
+**Real-world market data for your agents.** One MCP endpoint, 444 market data tools.
 
 [![npm](https://img.shields.io/npm/v/@prowl-ai/prowl-skill?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/@prowl-ai/prowl-skill)
 [![validate](https://img.shields.io/github/actions/workflow/status/PROWL-AI/prowl-skill/validate.yml?branch=main&style=flat-square&label=validate)](https://github.com/PROWL-AI/prowl-skill/actions/workflows/validate.yml)
 [![Live](https://img.shields.io/badge/prowl.chat-live-00c853?style=flat-square)](https://prowl.chat)
 [![MCP](https://img.shields.io/badge/MCP-prowl.chat%2Fmcp-6e40c9?style=flat-square)](https://prowl.chat/mcp)
-[![Tools](https://img.shields.io/badge/tools-448-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
+[![Tools](https://img.shields.io/badge/tools-444-0969da?style=flat-square)](https://prowl.chat/mcp/skill.md)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Cursor, Claude Code, Codex, or your own stack) **448 market-intelligence tools across 15 providers** — SEO & backlinks, 60+ SERP engines, ad libraries, web scraping, reviews, AI/LLM mention tracking — plus the full Prowl research pipeline. Your agent calls real data instead of guessing, billed pay-as-you-go from a USD wallet.
+[Prowl](https://prowl.chat) is a single MCP endpoint that gives any AI agent (Claude Code, Cursor, Codex or your own stack) **444 market data tools across 17 providers**: search (102 SearchAPI engines), ads, SEO and backlinks, app stores, reviews, social, trends and finance. The agent calls what it needs through `prowl_search_tools` → `prowl_tool_info` → `prowl_call_tool`, each call is billed on its own from one USD wallet, and every number comes back with the tool that returned it.
+
+One call for one number. A report when one call is not enough: `prowl_analyze` plans many calls, cross-checks numeric claims against independent tools and composes the result. No agent of your own? Ask Prowl Agent on [prowl.chat](https://prowl.chat), which runs on the same tools.
 
 This repo is the **installable plugin**: a namespaced `/prowl:*` skill plus a ready-made MCP config. Install it and your coding agent wires up the rest itself.
 
@@ -31,7 +33,7 @@ Install either or both — the MCP plugin for agent tool calls, the CLI plugin f
 
 ### 1. Get a token (human, one time)
 
-1. Sign up at <https://prowl.chat> ($5 starter credit, no card).
+1. Sign up at <https://prowl.chat> ($15 starter credit, no card).
 2. Optionally top up the wallet.
 3. Generate a `prowl_...` API key under **MCP Home → API keys & config** (shown once).
 
@@ -109,7 +111,7 @@ Configure a Streamable HTTP MCP server at `https://prowl.chat/mcp` with header `
 curl https://prowl.chat/mcp/health
 ```
 
-Then, from your agent, run `prowl_list_tools` (free) → 448 tools grouped by category.
+Then, from your agent, run `prowl_list_tools` (free) → 444 tools grouped by category.
 
 ## The status widget
 
@@ -140,9 +142,9 @@ pruned after seven days, and the plugin never writes to your Claude Code setting
 ## What your agent gets
 
 - **23 MCP tools** front the whole catalog — discovery and schema lookup are free; only data calls are metered.
+- **Reports, when one call is not enough** – `prowl_analyze` plans the calls and composes up to 16 intelligence modules (8 without a subscription). A typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.
 - **3 execution modes** for `prowl_analyze` — `basic` (20–100 calls, 30–90s), `deep` (40–300, 3–5 min, needs Exploit+) and `max` (60–400, 5–10 min, needs Blackops+). A key without the subscription is downgraded to `basic` rather than refused.
 - **8 playbooks** — `geo-visibility-audit`, `competitor-teardown`, `content-engine`, `local-and-reputation`, `mobile-aso`, `amazon-marketplace`, `idea-validation`, `channel-economics-audit`.
-- **Verified reports** — a typed evidence ledger extracts claims, attacks them adversarially, then gap-fills what survives. Contradictions and refuted claims ship inside the report.
 - **Artifacts and exports** — infographic, PDF, PPTX, audio brief and video from `prowl_generate_artifact`; Markdown and HTML from `prowl_export_report`. Both read the report cached against the `session_id` that produced it.
 
 Prefer a terminal? Install the `prowl-cli` plugin above, or use [`@prowl-ai/cli`](https://github.com/PROWL-AI/prowl-cli) directly.

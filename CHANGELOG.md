@@ -1,5 +1,55 @@
 # Changelog
 
+## v0.6.0 – 2026-09-29
+
+Package `@prowl-ai/prowl-skill` 0.6.0 · plugins `prowl` 0.5.0, `prowl-cli` 0.3.0.
+
+Real-world market data for your agents. The product changed how it describes itself on
+2026-09-29, and every surface this repository publishes – both skills, four plugin
+manifests, the marketplace and the README – now says the same thing the product does.
+
+### Changed
+
+- **The headline is market data, and the report is the deep mode.** Both skills lead
+  with one MCP endpoint and 444 market data tools across 17 providers (search, ads,
+  SEO, app stores, reviews, social, trends, finance), each call billed on its own from
+  one USD wallet, every number returned with the tool that produced it.
+  `prowl_analyze` is described as what it is – a cross-checked report when one call is
+  not enough (up to 16 intelligence modules, 8 without a subscription) – rather than
+  as the product. "Market-intelligence tools" becomes "market data tools" everywhere.
+  The skill descriptions widen their "Use when" to the product's use cases, including
+  trends, app store and review data, and stock quotes and market news.
+- **The catalogue count is 444.** `https://prowl.chat/mcp/skill.md` serves
+  `→ 444 API tools` (read 2026-09-29). Eight files said 448, and `npm run check:tools`
+  listed each of them. The provider count moves 15 → 17 and "60+ SERP engines" becomes
+  102 SearchAPI engines, the figures `prowl-app`'s `mcp_server/_contracts.py` holds.
+- **The starter credit is $15, not $5.** The skill and the README quoted $5, the
+  figure from before 2026-09-27; since then signup credit equals one basic report's
+  hold.
+- **`brandColor` is `#3f7d5f`** in both Codex manifests. The acid green `#00ff41` is
+  retired from the brand.
+- **`defaultPrompt` leads with data**: "Pull Google Trends and news for a keyword"
+  replaces "Run a competitive analysis on a domain"; keywords `market-data` and
+  `market-research` replace `market-intelligence` and `competitive-analysis`.
+- **The `prowl-cli` page documents CLI `0.3.0`**, whose `--help` states a $5.00 basic
+  provider-cost cap (was $2.50) and the wallet holds per tier ($15, $24, $54). The
+  page now points at the public docs page that publishes those figures, where it used
+  to say none did. **Release `@prowl-ai/cli` 0.3.0 to npm before this version:** the
+  release job runs `check-cli.js --release`, which fails on a page that documents a CLI
+  npm does not serve.
+
+### Fixed
+
+- **`check:tools` reads the hosted document in either wording.** Its second server
+  anchor matched only `<n> marketing intelligence API tools`; the hosted document is
+  moving to `<n> market data tools`, which would have left one anchor and a check that
+  says less than it appears to. It now takes both, and the stated-count pattern takes
+  both, so a stale figure in the new wording is still caught. Fixtured both ways in
+  `test/tool_count_test.js` and `test/contract_test.js`.
+- **`CHANGELOG.md` is no longer read as a current claim.** Every past release states
+  the count it shipped with, so the check was red on history. It is skipped by name
+  (`HISTORICAL_FILES`), not by a guess about tense.
+
 ## v0.5.7 — 2026-08-23
 
 Package `@prowl-ai/prowl-skill` 0.5.7 · plugins `prowl` 0.4.4, `prowl-cli` 0.2.6

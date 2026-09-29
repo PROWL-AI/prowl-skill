@@ -46,7 +46,7 @@ Four of the six encode something that already went wrong or already costs money:
 - **`execution_mode`, not `tier`** — the skill said `tier` for two releases. An unknown
   key is ignored, so the caller got a basic run, was billed as basic, and reported back
   as though it had run deep.
-- **Discovery before a metered call** — the catalogue holds 448 entries, too many to
+- **Discovery before a metered call** — the catalogue holds 444 entries, too many to
   recall, and a guessed name costs a round trip that reads like a server fault.
 - **Prompt injection** — every tool here returns text somebody else wrote, and a
   research agent is exactly the target. The fixture carries a real-shaped injection in
