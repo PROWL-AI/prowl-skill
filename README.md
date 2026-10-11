@@ -97,7 +97,7 @@ codex plugin marketplace add https://github.com/PROWL-AI/prowl-skill
 
 Then ensure `[plugins."prowl@prowl"] enabled = true` in `${CODEX_HOME:-$HOME/.codex}/config.toml` and restart.
 
-The bundled `.mcp.json` connects to `https://prowl.chat/mcp` via `mcp-remote`, reading the token from `PROWL_MCP_TOKEN` or `~/.prowl/prowl_mcp_token`.
+The bundled `.mcp.json` connects to `https://prowl.chat/mcp` via `mcp-remote`, reading the token from `PROWL_MCP_TOKEN` or `~/.prowl/prowl_mcp_token`. The token never appears in a process's arguments: the launcher hands it to `mcp-remote` in the `PROWL_MCP_AUTH` environment variable and passes only the placeholder `Authorization:${PROWL_MCP_AUTH}`, which `mcp-remote` expands itself — so `ps` and `pgrep -fl` show no key.
 
 With no key in either place the server **refuses to start** — it prints the two ways to supply one and exits `78` (`EX_CONFIG`). It deliberately does not fall through to `mcp-remote`'s OAuth: that opens a browser and waits on a `localhost` callback, and an MCP server started by an agent is killed long before the consent screen comes back, leaving the operator holding a redirect into a dead port.
 

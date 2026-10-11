@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.6.1 – 2026-10-11
+
+Package `@prowl-ai/prowl-skill` 0.6.1 · plugins `prowl` 0.5.1, `prowl-cli` 0.3.0.
+
+### Security
+
+- **The API key is no longer in a process's arguments.** The bundled launcher used to
+  start `mcp-remote … --header "Authorization: Bearer <key>"`, so the key sat in argv,
+  where any process of the same user reads it with `ps` or `pgrep -fl` — and two Prowl
+  keys leaked from one machine exactly that way (2026-10-04, 2026-10-09). The launcher
+  now exports `PROWL_MCP_AUTH="Bearer <key>"` and passes the literal
+  `Authorization:${PROWL_MCP_AUTH}`, which `mcp-remote` expands from its own
+  environment. Key sources and their order are unchanged. `test/mcp_launch_test.js`
+  asserts no argument carries the key from any source; `negative-self-test.js` plants
+  the old form and watches that assertion fire. Verified live against prowl.chat with
+  `mcp-remote` 0.14.3: `initialize` and `tools/list` (23 tools) succeed, the argv shows
+  only the placeholder.
+- **Restart running sessions after updating.** An `mcp-remote` already running keeps
+  its old argv until its session restarts; rotate a key that was exposed.
+
 ## v0.6.0 – 2026-09-29
 
 Package `@prowl-ai/prowl-skill` 0.6.0 · plugins `prowl` 0.5.0, `prowl-cli` 0.3.0.

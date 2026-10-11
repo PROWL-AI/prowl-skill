@@ -17,6 +17,13 @@
  * the END — shadowing `npx` by PATH alone does not work. A `.profile` in the fake HOME
  * is sourced after `path_helper` and does win, and that is how the real `npx` argv is
  * captured here. No network: the fake `npx` is all this suite ever executes.
+ *
+ * The second regression (2026-10-11): the key used to ride in `mcp-remote`'s argv as
+ * `Authorization: Bearer <key>`, readable by any same-user `ps`/`pgrep -fl`. Two
+ * Prowl keys leaked from this machine exactly that way (2026-10-04, 2026-10-09). The
+ * launcher now exports the header value as `PROWL_MCP_AUTH` and passes the literal
+ * placeholder `Authorization:${PROWL_MCP_AUTH}`, which `mcp-remote` expands from its
+ * own environment. The fake `npx` records that variable beside its argv.
  */
 
 const assert = require('assert');
@@ -45,9 +52,10 @@ function launch(opts = {}) {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'prowl-launch-'));
   const bin = path.join(home, '.fakebin');
   const log = path.join(home, 'npx-argv.txt');
+  const envLog = path.join(home, 'npx-auth.txt');
 
   fs.mkdirSync(bin, { recursive: true });
-  fs.writeFileSync(path.join(bin, 'npx'), '#!/bin/sh\nprintf "%s\\n" "$@" > "$FAKE_NPX_LOG"\n');
+  fs.writeFileSync(path.join(bin, 'npx'), '#!/bin/sh\nprintf "%s\\n" "$@" > "$FAKE_NPX_LOG"\nprintf "%s" "${PROWL_MCP_AUTH-<unset>}" > "$FAKE_NPX_ENV_LOG"\n');
   fs.chmodSync(path.join(bin, 'npx'), 0o755);
   // Sourced after `path_helper`, so this PATH is the one the launcher sees.
   fs.writeFileSync(path.join(home, '.profile'), `PATH="${bin}:$PATH"\nexport PATH\n`);
@@ -59,7 +67,7 @@ function launch(opts = {}) {
   }
 
   const r = spawnSync(server.command, server.args, {
-    env: { HOME: home, PATH: '/usr/bin:/bin', FAKE_NPX_LOG: log, ...(opts.env || {}) },
+    env: { HOME: home, PATH: '/usr/bin:/bin', FAKE_NPX_LOG: log, FAKE_NPX_ENV_LOG: envLog, ...(opts.env || {}) },
     encoding: 'utf8',
     timeout: 20000,
   });
@@ -68,6 +76,7 @@ function launch(opts = {}) {
     status: r.status,
     stderr: r.stderr || '',
     npxArgv: fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split('\n') : null,
+    npxAuth: fs.existsSync(envLog) ? fs.readFileSync(envLog, 'utf8') : null,
     cleanup: () => fs.rmSync(home, { recursive: true, force: true }),
   };
 }
@@ -128,6 +137,9 @@ it('treats a whitespace-only PROWL_MCP_TOKEN as no key', () => {
 
 // ------------------------------------------------------- starts, with the key it found
 
+/** The literal argument: `mcp-remote` expands the placeholder from its own environment. */
+const HEADER_ARG = 'Authorization:${PROWL_MCP_AUTH}';
+
 /** Every source the launcher documents, in the order it consults them. */
 const SOURCES = [
   ['PROWL_MCP_TOKEN', { env: { PROWL_MCP_TOKEN: 'prowl_env' } }, 'prowl_env'],
@@ -140,10 +152,16 @@ for (const [label, opts, expected] of SOURCES) {
     withLaunch(opts, (r) => {
       assert.ok(r.npxArgv, `npx never ran for ${label} (exit ${r.status}): ${r.stderr}`);
       assert.ok(r.npxArgv.includes('mcp-remote'), `not mcp-remote: ${r.npxArgv}`);
-      assert.ok(
-        r.npxArgv.includes(`Authorization: Bearer ${expected}`),
-        `header did not carry the key from ${label}: ${JSON.stringify(r.npxArgv)}`,
-      );
+      assert.strictEqual(r.npxAuth, `Bearer ${expected}`, `PROWL_MCP_AUTH did not carry the key from ${label}`);
+      assert.ok(r.npxArgv.includes(HEADER_ARG), `header placeholder missing: ${JSON.stringify(r.npxArgv)}`);
+    });
+  });
+
+  it(`keeps the key from ${label} out of mcp-remote's argv`, () => {
+    withLaunch(opts, (r) => {
+      assert.ok(r.npxArgv, `npx never ran for ${label}`);
+      const leaked = r.npxArgv.filter((a) => a.includes(expected));
+      assert.deepStrictEqual(leaked, [], `key in argv, visible to ps: ${JSON.stringify(leaked)}`);
     });
   });
 }
@@ -155,7 +173,7 @@ it('prefers the env var over both files', () => {
       files: { '.prowl/prowl_mcp_token': 'prowl_plugin', '.codex/prowl_mcp_token': 'prowl_codex' },
     },
     (r) => {
-      assert.ok(r.npxArgv.includes('Authorization: Bearer prowl_env'), JSON.stringify(r.npxArgv));
+      assert.strictEqual(r.npxAuth, 'Bearer prowl_env');
     },
   );
 });
@@ -164,7 +182,7 @@ it('prefers the plugin file over the Codex file', () => {
   withLaunch(
     { files: { '.prowl/prowl_mcp_token': 'prowl_plugin', '.codex/prowl_mcp_token': 'prowl_codex' } },
     (r) => {
-      assert.ok(r.npxArgv.includes('Authorization: Bearer prowl_plugin'), JSON.stringify(r.npxArgv));
+      assert.strictEqual(r.npxAuth, 'Bearer prowl_plugin');
     },
   );
 });
