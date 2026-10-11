@@ -129,6 +129,16 @@ const PLANTS = [
     expect: 'npx ran without a key',
   },
   {
+    // The leak this launcher was changed for on 2026-10-11: the key back in
+    // `mcp-remote`'s argv, where any same-user `ps` or `pgrep -fl` prints it. Two
+    // Prowl keys left this machine that way. The header still works, so nothing but
+    // the argv assertion notices.
+    name: 'the launcher puts the key back into argv',
+    file: 'plugins/prowl/.mcp.json',
+    apply: (t) => t.replace("--header 'Authorization:${PROWL_MCP_AUTH}'", '--header \\"Authorization: $PROWL_MCP_AUTH\\"'),
+    expect: 'key in argv, visible to ps',
+  },
+  {
     // The version lives in seven places, and a release that tags one of them while
     // shipping another is the failure this check exists to make impossible.
     name: 'a plugin stops agreeing with itself about its version',

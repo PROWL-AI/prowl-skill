@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires network access to prowl.chat and a Prowl API token; speaks MCP protocol 2025-06-18 over Streamable HTTP; the bundled MCP config runs `npx mcp-remote` (needs Node.js 18+).
 metadata:
   author: prowl.chat
-  version: "0.5.0"
+  version: "0.5.1"
 ---
 
 # Prowl – real-world market data for your agents

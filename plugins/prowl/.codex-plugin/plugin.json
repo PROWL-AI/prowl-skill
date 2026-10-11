@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prowl",
   "displayName": "Prowl",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Real-world market data for your agents: the Prowl skill backed by the hosted Prowl MCP server (444 market data tools across 17 providers), with a status widget that makes a running call, its progress and its cost visible in the terminal.",
   "author": {
     "name": "Prowl",

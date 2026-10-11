@@ -35,10 +35,11 @@ takes `PROWL_API_KEY` (or `PROWL_MCP_HEADER="Name: value"` when something in fro
 holds the key). **The key travels by NAME, never through `cat` on the command line:**
 a value in argv is visible to `ps`, lands in shell history, and the shape below is
 exactly how two of this machine's leaks happened. The observatory's vault holds it as
-`prowl/prod/PROWL_API_KEY` (put 2026-09-14) and hands it to one command:
+`0xDEV/prod/PROWL_API_KEY` (put 2026-09-14 as `prowl/prod`, merged into prowl.chat's registry
+folder 2026-10-11) and hands it to one command, vault only:
 
 ```bash
-~/DATA/project-observatory/tools/use_secret.py run prowl PROWL_API_KEY -- npm run check:contract
+python "$(project-observatory full-path)/tools/use_secret.py" run --vault-only --env prod 0xDEV PROWL_API_KEY -- npm run check:contract
 ```
 
 The previous example here went through the local MCP gateway with a role key read by
